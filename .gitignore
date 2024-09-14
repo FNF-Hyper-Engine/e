@@ -1,4 +1,3 @@
-.vscode/*
-.export/*
-.secrets/*
-gamejoltkey.txt
+.vscode/
+.export/
+.secrets/
