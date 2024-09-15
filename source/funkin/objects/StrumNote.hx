@@ -2,6 +2,8 @@ package funkin.objects;
 
 class StrumNote extends FunkinSprite
 {
+	public var resetAnim:Float = 0;
+
 	public function new(x:Float, y:Float)
 	{
 		super(x, y);
@@ -37,19 +39,32 @@ class StrumNote extends FunkinSprite
 
 	override function update(elapsed:Float)
 	{
+		if (resetAnim > 0)
+		{
+			resetAnim -= elapsed;
+			if (resetAnim <= 0)
+			{
+				centerOffsets();
+				playAnim('$ID', true);
+				// centerOffsets();
+				resetAnim = 0;
+			}
+		}
+		super.update(elapsed);
+
 		if (animation.curAnim.name == '$ID' + 'confirm')
 		{
 			updateConfirmOffset();
 		}
-		super.update(elapsed);
 	}
 
 	function updateConfirmOffset()
 	{ // TODO: Find a calc to make the offset work fine on other angles
 		centerOffsets();
-		offset.x -= 13;
-		offset.y -= 10;
-
+		offset.x -= 5;
+		offset.y -= 5;
+		if (animation.curAnim.finished)
+			playAnim('${ID}', false);
 		// centerOffsets();
 	}
 }

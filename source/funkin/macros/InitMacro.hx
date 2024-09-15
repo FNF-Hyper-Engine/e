@@ -4,7 +4,8 @@ class InitMacro
 {
 	macro static function init()
 	{
-		trace(Sys.args()[1]);
+		trace('Macro Started, OS: ${lime.system.System.deviceModel} ');
+
 		return macro {};
 	}
 }

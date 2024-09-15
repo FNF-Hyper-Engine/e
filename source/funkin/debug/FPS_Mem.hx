@@ -23,7 +23,7 @@ class FPS_Mem extends TextField
 
 		selectable = false;
 
-		defaultTextFormat = new TextFormat("_sans", 12, inCol);
+		defaultTextFormat = new TextFormat("segoe-ui-boot", 12, inCol);
 
 		text = "FPS: ";
 

@@ -1,13 +1,21 @@
 package funkin.objects;
 
+import openfl.display3D.Context3DTextureFilter;
+
 class StrumLine extends FunkinSprite
 {
 	public var strumNotes:FlxTypedGroup<StrumNote>;
+	public var botStrum:Bool;
+	public var notes:FlxTypedGroup<Note>;
+	public var scrollSpeed:Float = 1;
 
 	public function new(x, y, player:Int = 1, lanes:Int = 4)
 	{
 		super(x, y);
 		strumNotes = new FlxTypedGroup<StrumNote>();
+		notes = new FlxTypedGroup<Note>();
+		if (player == 0)
+			botStrum = true;
 		for (i in 0...lanes)
 		{
 			var strumNote:StrumNote;
@@ -25,11 +33,85 @@ class StrumLine extends FunkinSprite
 
 	override function update(elapsed:Float)
 	{
-		super.update(elapsed);
 		strumNotes.forEach(function(strumNote:StrumNote)
 		{
 			strumNote.x = x + (strumNote.width * strumNote.ID);
 			strumNote.y = y;
 		});
+
+		notes.forEach(function(daNote:Note)
+		{
+			var roundedSpeed:Float = FlxMath.roundDecimal(scrollSpeed, 2);
+			var fakeCrochet:Float = (60 / PlayState.SONG.bpm) * 1000;
+
+			daNote.y = (strumNotes.members[daNote.noteData].y
+				+ 0.45
+				- (Conductor.songPosition - daNote.strumTime) * (0.45 * FlxMath.roundDecimal(scrollSpeed, 2)));
+			daNote.x = strumNotes.members[daNote.noteData].x;
+
+			// daNote.y -= daNote.height;
+			var center:Float = y + 0 + Note.swagWidth / 2;
+			if (daNote.isSustainNote
+				&& daNote.strumTime <= Conductor.songPosition + 100
+				&& !daNote.mustPress
+				|| daNote.mustPress
+				&& daNote.wasGoodHit)
+			{
+				var swagRect = new FlxRect(0, strumNotes.members[daNote.noteData].y + Note.swagWidth / 2 - daNote.y, daNote.width * 2, daNote.height * 2);
+				if (daNote.y + daNote.offset.y * daNote.scale.y <= center)
+				{
+					swagRect.y = (center - daNote.y) / daNote.scale.y;
+					swagRect.width = daNote.width / daNote.scale.x;
+					swagRect.height = (daNote.height / daNote.scale.y) - swagRect.y;
+				}
+				daNote.clipRect = swagRect;
+			}
+
+			if (daNote.y > FlxG.height)
+			{
+				daNote.active = false;
+				daNote.visible = false;
+			}
+			else
+			{
+				daNote.visible = true;
+				daNote.active = true;
+			}
+
+			if (!daNote.mustPress && daNote.wasGoodHit)
+				invalidateNote(daNote, true);
+			if (daNote.tooLate)
+				invalidateNote(daNote);
+		});
+		super.update(elapsed);
+	}
+
+	public function invalidateNote(note:Note, strum:Bool = false)
+	{
+		if (!note.isSustainNote)
+		{
+			note.kill();
+			notes.remove(note, true);
+			note.destroy();
+		}
+		else
+		{
+			if (note.strumTime <= Conductor.songPosition - 100)
+			{
+				note.kill();
+				notes.remove(note, true);
+				note.destroy();
+			}
+		}
+		//	Sys.println("[NOTE DESTROYING]: AUTO-NOTE DESTROYED AT: " + (Conductor.songPosition / 1000) + ' SECONDS');
+		if (strum)
+		{
+			var strum = strumNotes.members[note.noteData];
+
+			if (strum.animation.curAnim.finished)
+				strum.playAnim('${note.noteData}', false);
+			if (note.mustPress)
+				strum.playAnim('${note.noteData}confirm', false);
+		}
 	}
 }
