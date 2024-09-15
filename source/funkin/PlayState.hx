@@ -107,7 +107,7 @@ class PlayState extends MusicBeatState
 					{
 						sustainNote.playAnim('${daNoteData}end');
 						sustainNote.scale.y = 1;
-						sustainNote.strumTime -= Conductor.stepCrochet * 0.1;
+						sustainNote.strumTime = sustainNote.prevNote.strumTime + Conductor.stepCrochet;
 						// sustainNote.offset.y += sustainNote.height * 0.1;
 					}
 					sustainNote.alpha = 0.6;
