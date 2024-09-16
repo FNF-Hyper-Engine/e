@@ -11,6 +11,12 @@ class PlayState extends MusicBeatState
 
 	public static var SONG:SwagSong;
 
+	public var progressDial:FlxPieDial;
+
+	public static var middleScroll:Bool = false;
+
+	public static var downScroll:Bool = false;
+
 	private var healthHeads:FunkinSprite;
 	private var unspawnNotes:Array<Note> = [];
 
@@ -21,33 +27,10 @@ class PlayState extends MusicBeatState
 
 	override public function create()
 	{
-		cpuStrums = new StrumLine(60, 50, 0);
-		add(cpuStrums.strumNotes);
-		add(cpuStrums.notes);
-		add(cpuStrums);
-
-		playerStrums = new StrumLine(FlxG.width * 0.6, 50, 1);
-		add(playerStrums.strumNotes);
-		add(playerStrums.notes);
-		add(playerStrums);
-
-		healthBar = new FlxBar(0, 0, RIGHT_TO_LEFT, 600, 19, this, 'health', 0.0, 2.0);
-
-		healthBar.createFilledBar(0xFFFF0000, 0xFF66FF33, true, FlxColor.BLACK);
-		healthBar.screenCenter(X);
-		healthBar.y = FlxG.height - Note.swagWidth;
-		add(healthBar);
-
-		healthHeads = new FunkinSprite(healthBar.x, healthBar.y);
-		healthHeads.atlasFrames('healthHeads');
-		healthHeads.updateHitbox();
-		healthHeads.setPosition(healthBar.x, healthBar.y - 75);
-		add(healthHeads);
-		notes = new FlxTypedGroup<Note>();
-		add(notes);
+		presongLoad();
 
 		if (SONG == null)
-			SONG = Song.loadFromJson('bopeebo-hard', 'bopeebo');
+			SONG = Song.loadFromJson('milf-hard', 'milf');
 
 		FlxG.sound.playMusic(Paths.inst(SONG.song.toLowerCase()), 1, false);
 		FlxG.sound.music.pitch = 1;
@@ -96,33 +79,55 @@ class PlayState extends MusicBeatState
 
 				susLength = susLength / Conductor.stepCrochet;
 				unspawnNotes.push(swagNote);
-
+				var height:Float = 0;
 				for (susNote in 0...Math.floor(susLength))
 				{
 					var count:Int = Math.round(susLength);
 					oldNote = unspawnNotes[Std.int(unspawnNotes.length - 1)];
 
 					var sustainNote:Note = new Note(daStrumTime + (Conductor.stepCrochet * susNote) + Conductor.stepCrochet, daNoteData, oldNote, true);
-					if (susNote == count - 1)
-					{
-						sustainNote.playAnim('${daNoteData}end');
-						sustainNote.scale.y = 1;
-						sustainNote.strumTime = sustainNote.prevNote.strumTime + Conductor.stepCrochet;
-						// sustainNote.offset.y += sustainNote.height * 0.1;
-					}
-					sustainNote.alpha = 0.6;
-
-					unspawnNotes.push(sustainNote);
-
+					height += sustainNote.height;
 					sustainNote.mustPress = gottaHitNote;
-					sustainNote.offset.x -= sustainNote.width;
-
-					if (sustainNote.mustPress)
-					{
-						sustainNote.x += FlxG.width / 2; // general offset
-					}
+					sustainNote.makeGraphic(1,1);
+					sustainNote.visible = false;
+					unspawnNotes.push(sustainNote);
 				}
+				trace(height);
 
+				var actualNote:Note = new Note(daStrumTime + 50, daNoteData, oldNote, true);
+				actualNote.height = height;
+				actualNote.mustPress = gottaHitNote;
+				actualNote.ID = swagNote.ID;
+				actualNote.setGraphicSize(Note.swagWidth / 2, Std.int(height));
+				actualNote.updateHitbox();
+				actualNote.offset.x -= actualNote.width / 2;
+				actualNote.offset.y -= 2.5;
+				actualNote.scale.x = 0.7;
+				actualNote.y += actualNote.height;
+
+				var s:Note = new Note(actualNote.strumTime + (Conductor.stepCrochet * Math.floor(susLength)) - 10, daNoteData, oldNote, true);
+				s.sustainLength = songNotes[2];
+				s.scrollFactor.set(0, 0);
+				s.mustPress = gottaHitNote;
+				s.isSustainNote = true;
+				s.playAnim('${s.noteData}end');
+				s.offset.x -= s.width * 1.1;
+				s.offset.y += 5;
+				s.scale.y = 1;
+				if (susLength > 0)
+				{
+					unspawnNotes.push(actualNote);
+					function sortByShit(Obj1:Note, Obj2:Note):Int
+					{
+						return sortNotes(FlxSort.ASCENDING, Obj1, Obj2);
+					}
+
+					function sortNotes(order:Int = FlxSort.ASCENDING, Obj1:Note, Obj2:Note)
+					{
+						return FlxSort.byValues(order, Obj1.strumTime, Obj2.strumTime);
+					}
+					unspawnNotes.push(s);
+				}
 				swagNote.mustPress = gottaHitNote;
 
 				if (swagNote.mustPress)
@@ -168,10 +173,66 @@ class PlayState extends MusicBeatState
 			health = 0;
 
 		super.update(elapsed);
+		trace(getSongPercent(Conductor.songPosition, FlxG.sound.music.endTime));
 
 		healthHeads.setGraphicSize(FlxMath.lerp(200, healthHeads.width, 0.95));
 		healthHeads.updateHitbox();
 		healthHeads.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 100, 0) * 0.01)) - (healthHeads.width / 2);
+	}
+
+	function presongLoad()
+	{
+		cpuStrums = new StrumLine(60, 50, 0);
+		cpuStrums.scale.set(1, 1);
+		if (!middleScroll)
+		{
+			add(cpuStrums.strumNotes);
+			add(cpuStrums.notes);
+			add(cpuStrums);
+		}
+
+		playerStrums = new StrumLine(FlxG.width * 0.6, 50, 1);
+		playerStrums.scale.set(1, 1);
+		add(playerStrums.strumNotes);
+		add(playerStrums.notes);
+		add(playerStrums);
+
+		healthBar = new FlxBar(0, 0, RIGHT_TO_LEFT, 600, 19, this, 'health', 0.0, 2.0);
+
+		healthBar.createFilledBar(0xFFFF0000, 0xFF66FF33, true, FlxColor.BLACK);
+		healthBar.screenCenter(X);
+		healthBar.y = FlxG.height - Note.swagWidth;
+		add(healthBar);
+
+		healthHeads = new FunkinSprite(healthBar.x, healthBar.y);
+		healthHeads.antialiasing = true;
+		healthHeads.atlasFrames('healthHeads');
+		healthHeads.updateHitbox();
+		healthHeads.setPosition(healthBar.x, healthBar.y - 75);
+		add(healthHeads);
+		notes = new FlxTypedGroup<Note>();
+		add(notes);
+
+		progressDial = new FlxPieDial(healthBar.x + healthBar.width / 2 - 25, playerStrums.y + 10, 50, FlxColor.WHITE, 200, FlxPieDialShape.CIRCLE, true, 3);
+		progressDial.screenCenter(X);
+		progressDial.antialiasing = true;
+
+		if (middleScroll)
+		{
+			playerStrums.x = FlxG.height * 0.65 - Note.swagWidth / 2;
+			progressDial.x = playerStrums.x - progressDial.width;
+		}
+		if (downScroll)
+		{
+			var top = cpuStrums.y;
+			var bottom = healthBar.y;
+			playerStrums.y = bottom - Note.swagWidth / 2;
+			healthBar.y = top + 50;
+			progressDial.y = bottom - 10;
+			progressDial.x = 0;
+			healthHeads.y = healthBar.y - 75;
+		}
+		add(progressDial);
 	}
 
 	function keyShit(elapsed:Float)
@@ -212,12 +273,14 @@ class PlayState extends MusicBeatState
 					hitval = 'confirm';
 
 					playerStrums.invalidateNote(note, true);
+					health += 0.005;
 					note.wasGoodHit = true;
 				}
 				else if (note.isSustainNote && keyShit3[note.noteData] && note.canBeHit && note.mustPress)
 				{
 					hitval = 'confirm';
 					note.wasGoodHit = true;
+					health += 0.00025;
 					playerStrums.invalidateNote(note, true);
 				}
 			});
@@ -241,6 +304,7 @@ class PlayState extends MusicBeatState
 	{
 		super.stepHit();
 		// trace('Current Step is ${curStep * 1}.');
+		notes.sort(sortNotes, FlxSort.DESCENDING);
 	}
 
 	override function beatHit()
@@ -266,6 +330,20 @@ class PlayState extends MusicBeatState
 
 	function sortByShit(Obj1:Note, Obj2:Note):Int
 	{
-		return FlxSort.byValues(FlxSort.ASCENDING, Obj1.strumTime, Obj2.strumTime);
+		return sortNotes(FlxSort.ASCENDING, Obj1, Obj2);
+	}
+
+	function sortNotes(order:Int = FlxSort.ASCENDING, Obj1:Note, Obj2:Note)
+	{
+		return FlxSort.byValues(order, Obj1.strumTime, Obj2.strumTime);
+	}
+
+	function getSongPercent(part:Float, total:Float)
+	{
+		part /= 1000;
+		total /= 1000;
+		total = Std.int(total);
+		part = Std.int(total);
+		return (part / total) * 0.01;
 	}
 }

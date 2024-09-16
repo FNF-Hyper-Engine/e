@@ -35,7 +35,8 @@ class StrumLine extends FunkinSprite
 	{
 		strumNotes.forEach(function(strumNote:StrumNote)
 		{
-			strumNote.x = x + (strumNote.width * strumNote.ID);
+			strumNote.x = x + (strumNote.width * scale.x * strumNote.ID);
+			strumNote.scale.set(scale.x * 0.7 ,scale.y * 0.7);
 			strumNote.y = y;
 		});
 
@@ -43,26 +44,44 @@ class StrumLine extends FunkinSprite
 		{
 			var roundedSpeed:Float = FlxMath.roundDecimal(scrollSpeed, 2);
 			var fakeCrochet:Float = (60 / PlayState.SONG.bpm) * 1000;
-
-			daNote.y = (strumNotes.members[daNote.noteData].y
-				+ 0.45
-				- (Conductor.songPosition - daNote.strumTime) * (0.45 * FlxMath.roundDecimal(scrollSpeed, 2)));
+			if (!PlayState.downScroll)
+				daNote.y = (strumNotes.members[daNote.noteData].y
+					+ 0.45
+					- (Conductor.songPosition - daNote.strumTime) * (0.45 * FlxMath.roundDecimal(scrollSpeed, 2)));
+			else
+			{
+				daNote.y = (strumNotes.members[daNote.noteData].y
+					+ 0.45
+					+ (Conductor.songPosition - daNote.strumTime) * (0.45 * FlxMath.roundDecimal(scrollSpeed, 2)));
+				if (daNote.isSustainNote)
+				{
+					daNote.angle = 180;
+				}
+			}
 			daNote.x = strumNotes.members[daNote.noteData].x;
 
 			// daNote.y -= daNote.height;
-			var center:Float = y + 0 + Note.swagWidth / 2;
+			var center:Float = strumNotes.members[daNote.noteData].y + 0 + Note.swagWidth / 2;
 			if (daNote.isSustainNote
 				&& daNote.strumTime <= Conductor.songPosition + 100
 				&& !daNote.mustPress
 				|| daNote.mustPress
 				&& daNote.wasGoodHit)
 			{
-				var swagRect = new FlxRect(0, strumNotes.members[daNote.noteData].y + Note.swagWidth / 2 - daNote.y, daNote.width * 2, daNote.height * 2);
+				var swagRect:FlxRect = daNote.clipRect;
+				if (swagRect == null)
+					swagRect = new FlxRect(0, 0, daNote.frameWidth, daNote.frameHeight);
 				if (daNote.y + daNote.offset.y * daNote.scale.y <= center)
 				{
 					swagRect.y = (center - daNote.y) / daNote.scale.y;
 					swagRect.width = daNote.width / daNote.scale.x;
 					swagRect.height = (daNote.height / daNote.scale.y) - swagRect.y;
+				}
+				else if (y - daNote.offset.y * daNote.scale.y + daNote.height >= center && PlayState.downScroll)
+				{
+					swagRect.height = (center - daNote.y) / daNote.scale.y;
+					swagRect.y = daNote.frameHeight - swagRect.height;
+					daNote.clipRect = swagRect;
 				}
 				daNote.clipRect = swagRect;
 			}
@@ -96,7 +115,7 @@ class StrumLine extends FunkinSprite
 		}
 		else
 		{
-			if (note.strumTime <= Conductor.songPosition - 100)
+			if (note.y <= y - note.height)
 			{
 				note.kill();
 				notes.remove(note, true);

@@ -10,6 +10,8 @@ import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxGame;
 import flixel.FlxSprite;
+
+import flixel.addons.display.FlxPieDial;
 import flixel.FlxState;
 import flixel.FlxSubState;
 import flixel.addons.transition.FlxTransitionSprite.GraphicTransTileDiamond;
