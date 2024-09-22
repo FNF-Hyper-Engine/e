@@ -24,4 +24,13 @@ class FunkinSprite extends FlxSprite
 	{
 		frames = Paths.getSparrowAtlas(path);
 	}
+
+	public override function destroy():Void
+	{
+		frames = null;
+		// Cancel all tweens so they don't continue to run on a destroyed sprite.
+		// This prevents crashes.
+		FlxTween.cancelTweensOf(this);
+		super.destroy();
+	}
 }

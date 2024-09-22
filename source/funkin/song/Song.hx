@@ -1,19 +1,27 @@
 package funkin.song;
 
+
+
+import haxe.Json;
+import haxe.format.JsonParser;
+import lime.utils.Assets;
+
 using StringTools;
 
 typedef SwagSong =
 {
 	var song:String;
 	var notes:Array<SwagSection>;
-	var bpm:Int;
-	var sections:Int;
-	var sectionLengths:Array<Dynamic>;
+	var bpm:Float;
 	var needsVoices:Bool;
 	var speed:Float;
 
 	var player1:String;
 	var player2:String;
+	var player3:String;
+
+	var arrowSkin:String;
+	var splashSkin:String;
 	var validScore:Bool;
 }
 
@@ -21,41 +29,34 @@ class Song
 {
 	public var song:String;
 	public var notes:Array<SwagSection>;
-	public var bpm:Int;
-	public var sections:Int;
-	public var sectionLengths:Array<Dynamic> = [];
+	public var bpm:Float;
 	public var needsVoices:Bool = true;
+	public var arrowSkin:String;
+	public var splashSkin:String;
 	public var speed:Float = 1;
 
 	public var player1:String = 'bf';
 	public var player2:String = 'dad';
+	public var player3:String = 'gf';
 
-	public function new(song, notes, bpm, sections)
+	public function new(song, notes, bpm)
 	{
 		this.song = song;
 		this.notes = notes;
 		this.bpm = bpm;
-		this.sections = sections;
-
-		for (i in 0...notes.length)
-		{
-			this.sectionLengths.push(notes[i]);
-		}
 	}
 
-	public static function loadFromJson(jsonInput:String = 'tutorial', ?folder:String = 'tutorial'):SwagSong
+	public static function loadFromJson(jsonInput:String, ?folder:String):SwagSong
 	{
-		var rawJson = Assets.getText('assets/data/' + folder.toLowerCase() + '/' + jsonInput.toLowerCase() + '.json').trim();
+		var rawJson;
+
+		rawJson = Assets.getText('assets/data/${folder.toLowerCase()}/' + jsonInput.toLowerCase() + '.json').trim();
 
 		while (!rawJson.endsWith("}"))
 		{
 			rawJson = rawJson.substr(0, rawJson.length - 1);
 			// LOL GOING THROUGH THE BULLSHIT TO CLEAN IDK WHATS STRANGE
 		}
-
-		var swagShit:SwagSong = cast Json.parse(rawJson).song;
-		swagShit.validScore = true;
-		trace(swagShit.notes[0]);
 
 		// FIX THE CASTING ON WINDOWS/NATIVE
 		// Windows???
@@ -71,11 +72,9 @@ class Song
 
 				daNotes = songData.notes;
 				daSong = songData.song;
-				daSections = songData.sections;
-				daBpm = songData.bpm;
-				daSectionLengths = songData.sectionLengths; */
+				daBpm = songData.bpm; */
 
-		return swagShit;
+		return parseJSONshit(rawJson);
 	}
 
 	public static function parseJSONshit(rawJson:String):SwagSong

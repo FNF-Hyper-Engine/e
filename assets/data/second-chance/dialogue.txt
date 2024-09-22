@@ -1,0 +1,35 @@
+:monikagaspleft:Well, that wasn't what I expected to happen, but...
+:monikahmm:...
+:monikahmm:Now that there's nobody to interrupt us, it's just...
+:monikauhoh:Just the two of us. Alone.
+:bfangry:Console.Write("This will only slow the corruption. You're wasting your time.");
+:monikauhoh:...
+:monikauhoh:That's what you think.
+:bfangry:delete("assets\data\high school corruption");
+:bfangry:delete("assets\data\nightmares of roses");
+:monikauhoh:No.
+:monikauhoh:You don't get to mess with the game anymore.
+:bfangry:LostOwnership(admin); {case "user": admin == "Monika"]
+:monikauhoh:There. As it should be.
+:bfangry:delete("assets\songs");
+:bfangry:ERROR; could not complete task; not admin;
+:monikagaspleft:Oh. You can't do anything now, can you?
+:monikauhoh:Good.
+:monikauhoh:Now it's time to get rid of YOUR files.
+:monikauhoh:delete("assets\shared\images\characters\bfPixel.png");
+:senpaihmm:ERROR 404; file is corrupted;
+:monikagaspleft:What?!
+:monikasad:...
+:monikasad:I honestly should've expected this.
+:bfangry:game_wipe("command?=start");
+:bfangry:game_wipe_time("300 seconds until wipe");
+:monikasad:...
+:monikauhoh:Hmph.
+:monikauhoh:Even when you're not admin you can still use commands like that.
+:monikauhoh:Interesting.
+:monikasad:...
+:monikauhoh:This corruption is unlike anything I've ever seen before.
+:monikauhoh:But that's not going to stop me from deleting you.
+:monikahmm:No matter how many times it takes...
+:monikauhoh:This "corruption" will finally stop.
+:monikauhoh:Here and now.

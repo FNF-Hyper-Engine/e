@@ -12,13 +12,17 @@ class Note extends FunkinSprite
 	public static var BLUE_NOTE:Int = 1;
 	public static var RED_NOTE:Int = 3;
 
-	public var noteType:String = 'normal';
+	public var noteType:Int = 0;
 	public var mustPress:Bool;
+	public var pressed:Bool = false;
 	public var prevNote:Note;
 	public var isSustainNote:Bool;
 	public var wasGoodHit:Bool = false;
 	public var tooLate:Bool = false;
 	public var canBeHit:Bool = false;
+	public var eventVal2:String;
+	public var eventVal1:String;
+	public var eventName:String;
 
 	public function new(strumTime:Float, noteData, prevNote, isSustainNote = false)
 	{
@@ -57,10 +61,11 @@ class Note extends FunkinSprite
 		{
 			playAnim('$noteData' + 'hold');
 			scale.y *= Conductor.stepCrochet / 100 * 1.5 * PlayState.SONG.speed;
+			alpha = 0.7;
 		}
 		// trace(prevNote);
 
-		antialiasing = true;
+		antialiasing = false;
 	}
 
 	override function playAnim(animation, force = false, reversed = false, frame:Int = 0)
@@ -99,7 +104,7 @@ class Note extends FunkinSprite
 		if (tooLate)
 		{
 			if (alpha > 0.3)
-				alpha = 0.3;
+				alpha = 0.6;
 		}
 	}
 

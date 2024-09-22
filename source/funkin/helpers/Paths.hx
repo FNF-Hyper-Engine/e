@@ -9,12 +9,12 @@ class Paths
 	inline public static function setPathLevel(lvl:String = '')
 	{
 		level = lvl;
-		trace('[INFO]: Folder-Path-Level set to "$level".');
+		//trace('[INFO]: Folder-Path-Level set to "$level".');
 	}
 
 	inline public static function getPath(fileName:String, ext:String)
 	{
-		// trace('Loading "assets/images/$fileName$ext".');
+		// //trace('Loading "assets/images/$fileName$ext".');
 		return 'assets/images/$fileName$ext';
 	}
 
@@ -35,7 +35,7 @@ class Paths
 
 	inline public static function getSparrowAtlas(fileName:String)
 	{
-		// trace('Loading  SparrowAtlas: "$fileName".');
+		// //trace('Loading  SparrowAtlas: "$fileName".');
 		return FlxAtlasFrames.fromSparrow(image(fileName), xml(fileName));
 	}
 }

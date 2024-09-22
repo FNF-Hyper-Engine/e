@@ -28,7 +28,7 @@ class StrumNote extends FunkinSprite
 		addByPrefix('1static', 'down press');
 		addByPrefix('2static', 'up press');
 		addByPrefix('3static', 'right press');
-		antialiasing = true;
+		antialiasing = false;
 	}
 
 	override function playAnim(animation, force = false, reversed = false, frame:Int = 0)
@@ -44,8 +44,8 @@ class StrumNote extends FunkinSprite
 			resetAnim -= elapsed;
 			if (resetAnim <= 0)
 			{
-				centerOffsets();
-				playAnim('$ID', true);
+				//centerOffsets();
+				//playAnim('$ID', true);
 				// centerOffsets();
 				resetAnim = 0;
 			}
@@ -61,10 +61,10 @@ class StrumNote extends FunkinSprite
 	function updateConfirmOffset()
 	{ // TODO: Find a calc to make the offset work fine on other angles
 		centerOffsets();
-		offset.x -= 5;
-		offset.y -= 5;
+		offset.x -= 13;
+		offset.y -= 13;
 		if (animation.curAnim.finished)
 			playAnim('${ID}', false);
-		// centerOffsets();
+		 //centerOffsets();
 	}
 }

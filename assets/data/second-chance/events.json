@@ -1,0 +1,29 @@
+{
+	"events": [
+		[
+			0,
+			[
+				["Cam Boom Speed", "2", "2"]
+			]
+		],
+		[
+			6400,
+			[
+				["Cam Boom Speed", "4", "1"]
+			]
+		],
+		[
+			25600,
+			[
+				["Cam Boom Speed", "1", "3"]
+			]
+		],
+		[
+			38400,
+			[
+				["Cam Boom Speed", "1", "2"]
+			]
+		]
+	],
+	"format": "psych_v1"
+}

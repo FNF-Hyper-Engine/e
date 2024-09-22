@@ -5,7 +5,7 @@ import openfl.display3D.Context3DTextureFilter;
 class StrumLine extends FunkinSprite
 {
 	public var strumNotes:FlxTypedGroup<StrumNote>;
-	public var botStrum:Bool;
+	public var botStrum:Bool = true;
 	public var notes:FlxTypedGroup<Note>;
 	public var scrollSpeed:Float = 1;
 
@@ -14,8 +14,8 @@ class StrumLine extends FunkinSprite
 		super(x, y);
 		strumNotes = new FlxTypedGroup<StrumNote>();
 		notes = new FlxTypedGroup<Note>();
-		if (player == 0)
-			botStrum = true;
+		//if (player == 0)
+		//	botStrum = true;
 		for (i in 0...lanes)
 		{
 			var strumNote:StrumNote;
@@ -36,10 +36,10 @@ class StrumLine extends FunkinSprite
 		strumNotes.forEach(function(strumNote:StrumNote)
 		{
 			strumNote.x = x + (strumNote.width * scale.x * strumNote.ID);
-			strumNote.scale.set(scale.x * 0.7 ,scale.y * 0.7);
+			strumNote.scale.set(scale.x * 0.7, scale.y * 0.7);
 			strumNote.y = y;
 		});
-
+	
 		notes.forEach(function(daNote:Note)
 		{
 			var roundedSpeed:Float = FlxMath.roundDecimal(scrollSpeed, 2);
@@ -103,6 +103,7 @@ class StrumLine extends FunkinSprite
 				invalidateNote(daNote);
 		});
 		super.update(elapsed);
+
 	}
 
 	public function invalidateNote(note:Note, strum:Bool = false)
@@ -126,11 +127,11 @@ class StrumLine extends FunkinSprite
 		if (strum)
 		{
 			var strum = strumNotes.members[note.noteData];
+            if(note.mustPress)
+			strum.playAnim('${note.noteData}confirm', true);
 
 			if (strum.animation.curAnim.finished)
 				strum.playAnim('${note.noteData}', false);
-			if (note.mustPress)
-				strum.playAnim('${note.noteData}confirm', false);
 		}
 	}
 }
