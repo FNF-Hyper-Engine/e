@@ -1,3 +1,4 @@
 .vscode/*
 export/*
 *.hash
+.haxelib

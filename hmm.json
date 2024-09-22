@@ -1,0 +1,11 @@
+{
+  "dependencies": [
+    {
+      "name": "lime",
+      "type": "git",
+      "dir": "lime",
+      "ref": "master",
+      "url": "https://github.com/FNF-Hyper-Engine/lime"
+    }
+  ]
+}
