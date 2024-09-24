@@ -6,7 +6,7 @@ class Main extends Sprite
 	{
 		super();
 		#if (!android)
-		addChild(new FlxGame(0, 0, TitleState #if (!html5), 240, 240 #end));
+		addChild(new FlxGame(0, 0, TitleState #if (!html5), 100, 100 #end));
 		#else
 		addChild(new FlxGame(0, 0, PlayState));
 		#end

@@ -8,7 +8,7 @@ class PostBuild
 		for (arg in Sys.args())
 			switch arg
 			{
-				case "--cleanup":
+				case "-cleanup":
 					cleanup();
 			}
 	}

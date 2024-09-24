@@ -1,5 +1,8 @@
 package funkin;
 
+import funkin.gameplay.objects.char.Character.CharacterFile;
+import funkin.converters.ChartConvertUtil;
+
 class PlayState extends MusicBeatState
 {
 	var cpuStrums:StrumLine;
@@ -24,12 +27,11 @@ class PlayState extends MusicBeatState
 
 	public static var downScroll:Bool = false;
 
-	private var healthHeads:FunkinSprite;
 	private var unspawnNotes:Array<Note> = [];
 
 	private var coolSections:Array<Bool> = [];
 
-	public var defaultCamZoom:Float = 1.05;
+	public var defaultCamZoom:Float = 1;
 	public var health:Float = 1;
 
 	public var healthBar:FlxBar;
@@ -38,12 +40,19 @@ class PlayState extends MusicBeatState
 
 	var textidk:FlxText;
 
+	private var iconP1:HealthIcon;
+	private var iconP2:HealthIcon;
+
+	private var bf:Character;
+	private var gf:Character;
+	private var dad:Character;
+
 	override public function create()
 	{
 		presongLoad();
 
 		if (SONG == null)
-			SONG = Song.loadFromJson('epiphany-instrumental-hard', 'epiphany-instrumental');
+			SONG = Song.loadFromJson('milf-hard', 'milf');
 
 		Conductor.mapBPMChanges(SONG);
 		Conductor.changeBPM(SONG.bpm);
@@ -125,7 +134,7 @@ class PlayState extends MusicBeatState
 				s.isSustainNote = true;
 				s.playAnim('${s.noteData}end');
 				s.offset.x -= s.width * 1.1;
-				s.offset.y += 5;
+				s.offset.y += 7;
 				s.scale.y = 1;
 				if (susLength > 0)
 				{
@@ -157,8 +166,33 @@ class PlayState extends MusicBeatState
 
 		unspawnNotes.sort(sortByShit);
 		// trace(coolSections);
+
+		postCrap();
+
 		super.create();
 		startCountdown();
+	}
+
+	function postCrap()
+	{
+		iconP1 = new HealthIcon(bf.jsonFile.healthIcon, true);
+		iconP1.y = healthBar.y - (iconP1.height / 2);
+		add(iconP1);
+
+		iconP2 = new HealthIcon(dad.jsonFile.healthIcon, false);
+		iconP2.y = healthBar.y - (iconP2.height / 2);
+		add(iconP2);
+	}
+
+	function shitConversion(slicefart:String)
+	{
+		while (!slicefart.endsWith("}"))
+		{
+			slicefart = slicefart.substr(0, slicefart.length - 1);
+			// LOL GOING THROUGH THE BULLSHIT TO CLEAN IDK WHATS STRANGE
+		}
+
+		return Song.parseJSONshit(slicefart);
 	}
 
 	function startCountdown(skin:String = 'funkin')
@@ -222,25 +256,52 @@ class PlayState extends MusicBeatState
 		super.update(elapsed);
 
 		//////////////////////trace(getSongPercent(Conductor.songPosition, FlxG.sound.music.endTime));
+		if (iconP1 != null && iconP2 != null)
+		{
+			iconP1.setGraphicSize(Std.int(FlxMath.lerp(150, iconP1.width, 0.9)));
+			iconP2.setGraphicSize(Std.int(FlxMath.lerp(150, iconP2.width, 0.9)));
 
-		healthHeads.setGraphicSize(FlxMath.lerp(200, healthHeads.width, 0.5));
+			iconP1.updateHitbox();
+			iconP2.updateHitbox();
 
-		healthHeads.updateHitbox();
-		healthHeads.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 100, 0) * 0.01)) - (healthHeads.width / 2);
+			var iconOffset:Int = 26;
+
+			iconP1.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 100, 0) * 0.01) - iconOffset);
+			iconP2.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 100, 0) * 0.01)) - (iconP2.width - iconOffset);
+
+			if (healthBar.percent < 20)
+				iconP1.animation.curAnim.curFrame = 1;
+			else
+				iconP1.animation.curAnim.curFrame = 0;
+
+			if (healthBar.percent > 80)
+				iconP2.animation.curAnim.curFrame = 1;
+			else
+				iconP2.animation.curAnim.curFrame = 0;
+		}
 	}
 
 	function presongLoad()
 	{
 		instance = this;
 
+		bf = new Character();
+		add(bf);
+		dad = new Character();
+		add(dad);
+		gf = new Character();
+		add(gf);
+
 		cpuStrums = new StrumLine(60, 50, 0);
 		cpuStrums.scale.set(1, 1);
+
 		if (!middleScroll)
 		{
 			add(cpuStrums.strumNotes);
 			add(cpuStrums.notes);
 			add(cpuStrums);
 		}
+
 		Conductor.songPosition = -5000;
 		playerStrums = new StrumLine(FlxG.width * 0.6, 50, 1);
 		playerStrums.scale.set(1, 1);
@@ -255,12 +316,6 @@ class PlayState extends MusicBeatState
 		healthBar.y = FlxG.height - Note.swagWidth;
 		add(healthBar);
 
-		healthHeads = new FunkinSprite(healthBar.x, healthBar.y);
-		healthHeads.antialiasing = false;
-		healthHeads.atlasFrames('healthHeads');
-		healthHeads.updateHitbox();
-		healthHeads.setPosition(healthBar.x, healthBar.y - 75);
-		add(healthHeads);
 		notes = new FlxTypedGroup<Note>();
 		add(notes);
 
@@ -281,7 +336,6 @@ class PlayState extends MusicBeatState
 			healthBar.y = top + 50;
 			progressDial.y = bottom - 10;
 			progressDial.x = 0;
-			healthHeads.y = healthBar.y - 75;
 		}
 		add(progressDial);
 
@@ -350,8 +404,8 @@ class PlayState extends MusicBeatState
 					hitval = 'confirm';
 
 					playerStrums.invalidateNote(note, true);
-				    var fucker:Float = 0.005;
-					
+					var fucker:Float = 0.005;
+
 					health += 0.005;
 					note.wasGoodHit = true;
 					note.pressed = true;
@@ -392,8 +446,12 @@ class PlayState extends MusicBeatState
 	override function beatHit()
 	{
 		super.beatHit();
-		healthHeads.setGraphicSize(Std.int(healthHeads.width + 30));
-		healthHeads.updateHitbox();
+
+		iconP1.setGraphicSize(Std.int(iconP1.width + 30));
+		iconP2.setGraphicSize(Std.int(iconP2.width + 30));
+
+		iconP1.updateHitbox();
+		iconP2.updateHitbox();
 
 		if (SONG.notes[Math.floor(curStep / 16)] != null)
 		{
@@ -416,7 +474,7 @@ class PlayState extends MusicBeatState
 	{
 		super.sectionHit();
 		//////////////////////trace('Current Section is ${curSection * 1}.');
-		FlxG.camera.zoom += 0.05;
+		FlxG.camera.zoom += 0.03;
 
 		if (SONG.needsVoices)
 		{
@@ -454,5 +512,37 @@ class PlayState extends MusicBeatState
 		Conductor.songPosition = FlxG.sound.music.time;
 		vocals.time = Conductor.songPosition;
 		vocals.play();
+	}
+
+	override function onResize(width, height)
+	{
+		super.onResize(width, height);
+
+		trace('Resizing: Array:<Int> = [$width,$height]');
+		resyncVocals();
+	}
+
+	override function onFocusLost()
+	{
+		super.onFocusLost();
+
+		trace('Lost Focus! Pausing....');
+		pause();
+	}
+
+	override function onFocus()
+	{
+		super.onFocusLost();
+
+		trace('Focusing! Resyncing Vocals.......');
+		resyncVocals();
+	}
+
+	function pause()
+	{
+		FlxG.sound.music.pause();
+		Conductor.songPosition = FlxG.sound.music.time;
+		vocals.time = Conductor.songPosition;
+		vocals.pause();
 	}
 }

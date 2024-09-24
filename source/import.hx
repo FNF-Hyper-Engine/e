@@ -8,6 +8,12 @@
 #if (!macro)
 import flixel.FlxCamera;
 import funkin.objects.countdown.*;
+import moonchart.formats.fnf.FNFVSlice;
+import moonchart.formats.BasicFormat.FormatDifficulty;
+import funkin.gameplay.*;
+import funkin.gameplay.objects.*;
+import funkin.gameplay.objects.char.*;
+import moonchart.formats.fnf.legacy.FNFLegacy;
 import flixel.FlxG;
 import flixel.FlxGame;
 import flixel.FlxSprite;

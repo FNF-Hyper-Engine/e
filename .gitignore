@@ -1,4 +1,6 @@
 .vscode/*
 export/*
 *.hash
-.haxelib
+.haxelib/*
+hmm.json
+*.pdn
