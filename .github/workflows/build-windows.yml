@@ -27,6 +27,8 @@ jobs:
           haxelib install tjson 1.4.0 --never
           haxelib git moonchart https://github.com/MaybeMaru/moonchart --never
           haxelib install hxcpp 4.3.2 --never
+          haxelib git haxeui-flixel https://github.com/haxeui/haxeui-flixel --never
+          haxelib git haxeui-flixel https://github.com/haxeui/haxeui-core --never
           haxelib list
         shell: cmd
       - name: Compile
@@ -36,5 +38,5 @@ jobs:
       - name: Publish Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Example
+          name: hyper-engine-0.1.0
           path: export/release/windows/bin
