@@ -55,7 +55,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Hyper Engine
-          path: export/release/html5/bin
+          path: export/html5/bin
       # - name: Uploading artifact (executable)
       #   uses: actions/upload-artifact@v4
       #   with:
@@ -87,7 +87,7 @@ jobs:
           key: cache-build-html5
           path: |
             .haxelib/
-            export/release/html5/haxe/
-            export/release/html5/obj/
+            export/html5/haxe/
+            export/html5/obj/
           restore-keys: |
             cache-build-html5

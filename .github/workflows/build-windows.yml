@@ -54,7 +54,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Hyper Engine
-          path: export/release/windows/bin
+          path: export/windows/bin
       # - name: Uploading artifact (executable)
       #   uses: actions/upload-artifact@v4
       #   with:
@@ -86,7 +86,7 @@ jobs:
           key: cache-build-windows
           path: |
             .haxelib/
-            export/release/windows/haxe/
-            export/release/windows/obj/
+            export/windows/haxe/
+            export/windows/obj/
           restore-keys: |
             cache-build-windows

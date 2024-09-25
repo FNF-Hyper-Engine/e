@@ -22,8 +22,8 @@ jobs:
           key: cache-build-hl
           path: |
             .haxelib/
-            export/release/hl/haxe/
-            export/release/hl/obj/
+            export/hl/haxe/
+            export/hl/obj/
           restore-keys: |
             cache-build-hl
       - name: Installing/Updating libraries
@@ -49,12 +49,12 @@ jobs:
       - name: Building the game
         run: |
           haxelib run lime build hl
-          dir
+          dir export/
       - name: Uploading artifact (entire build)
         uses: actions/upload-artifact@v4
         with:
           name: Hyper Engine
-          path: export/release/hl/bin
+          path: export/hl/bin
       # - name: Uploading artifact (executable)
       #   uses: actions/upload-artifact@v4
       #   with:
@@ -70,7 +70,7 @@ jobs:
             })
             for (const cache of caches.data.actions_caches) {
               if (cache.key == "cache-build-hl") {
-                console.log('Clearing ' + cache.key + '...')
+                console.log('Clearing ' + cache.key + '...')e
                 await github.rest.actions.deleteActionsCacheById({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
@@ -86,7 +86,7 @@ jobs:
           key: cache-build-hl
           path: |
             .haxelib/
-            export/release/hl/haxe/
-            export/release/hl/obj/
+            export/hl/haxe/
+            export/hl/obj/
           restore-keys: |
             cache-build-hl
