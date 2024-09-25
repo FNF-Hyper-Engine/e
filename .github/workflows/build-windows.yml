@@ -24,7 +24,8 @@ jobs:
           haxelib install hxgamejolt-api 1.2.0
           haxelib install lime 8.0.1 --never
           haxelib install openfl 9.3.2   --never
-
+          haxelib install tjson 1.4.0 --never
+          haxelib git moonchart https://github.com/MaybeMaru/moonchart --never
           haxelib install hxcpp 4.3.2 --never
           haxelib list
         shell: cmd
