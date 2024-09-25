@@ -28,6 +28,11 @@ jobs:
             cache-build-windows
       - name: Installing/Updating libraries
         run: |
+          cd c:\
+          mkdir lol
+          cd lol
+          git clone https://github.com/FNF-Hyper-Engine/e
+          cd e
           haxelib setup C:\haxelib
           haxelib install flixel 5.5.0 --never
           haxelib install flixel-addons 3.2.1 --never
@@ -43,6 +48,7 @@ jobs:
           haxelib git haxeui-flixel https://github.com/haxeui/haxeui-flixel --never
           haxelib git haxeui-flixel https://github.com/haxeui/haxeui-core --never
           haxelib list
+
       - name: Building the game
         run: |
           haxelib run lime build cpp
