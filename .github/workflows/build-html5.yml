@@ -1,11 +1,11 @@
 
-name: Windows Build
+name: html5 Build
 on:
   push:
   workflow_dispatch:
 jobs:
   build:
-    name: Windows Build
+    name: html5 Build
     permissions: write-all
     runs-on: windows-latest
     steps:
@@ -19,13 +19,13 @@ jobs:
         uses: actions/cache@v3
         with:
           # not caching the bin folder to prevent asset duplication and stuff like that
-          key: cache-build-windows
+          key: cache-build-html5
           path: |
             .haxelib/
-            export/release/windows/haxe/
-            export/release/windows/obj/
+            export/release/html5/haxe/
+            export/release/html5/obj/
           restore-keys: |
-            cache-build-windows
+            cache-build-html5
       - name: Installing/Updating libraries
         run: |
        
@@ -48,12 +48,12 @@ jobs:
 
       - name: Building the game
         run: |
-          haxelib run lime build windows
+          haxelib run lime build html5
       - name: Uploading artifact (entire build)
         uses: actions/upload-artifact@v4
         with:
           name: Hyper Engine
-          path: export/release/windows/bin
+          path: export/release/html5/bin
       # - name: Uploading artifact (executable)
       #   uses: actions/upload-artifact@v4
       #   with:
@@ -68,7 +68,7 @@ jobs:
               repo: context.repo.repo,
             })
             for (const cache of caches.data.actions_caches) {
-              if (cache.key == "cache-build-windows") {
+              if (cache.key == "cache-build-html5") {
                 console.log('Clearing ' + cache.key + '...')
                 await github.rest.actions.deleteActionsCacheById({
                   owner: context.repo.owner,
@@ -82,10 +82,10 @@ jobs:
         uses: actions/cache@v3
         with:
           # caching again since for some reason it doesnt work with the first post cache shit
-          key: cache-build-windows
+          key: cache-build-html5
           path: |
             .haxelib/
-            export/release/windows/haxe/
-            export/release/windows/obj/
+            export/release/html5/haxe/
+            export/release/html5/obj/
           restore-keys: |
-            cache-build-windows
+            cache-build-html5
