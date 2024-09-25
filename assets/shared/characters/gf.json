@@ -1,12 +1,12 @@
 {
-  "char": "bf",
+  "char": "gf",
   "scale": {
     "x": 1.0,
     "y": 1.0
   },
 
-  "healthIcon": "bf",
-  "healthColors": [49, 176, 209],
+  "healthIcon": "gf",
+  "healthColors": [165, 0, 77],
   "animOffsets": [
     {
       "name": "idle",

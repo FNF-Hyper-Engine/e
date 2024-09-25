@@ -24,6 +24,9 @@ class Note extends FunkinSprite
 	public var eventVal1:String;
 	public var eventName:String;
 
+	public var hitHealth:Float = 0.02;
+	public var missHealth:Float = 0.1;
+
 	public function new(strumTime:Float, noteData, prevNote, isSustainNote = false)
 	{
 		super(x, y);
@@ -88,7 +91,7 @@ class Note extends FunkinSprite
 			else
 				canBeHit = false;
 
-			if (strumTime < Conductor.songPosition - (Conductor.safeZoneOffset * 1.1))
+			if (strumTime < Conductor.songPosition - 173) //(Conductor.safeZoneOffset * 0.7))
 				tooLate = true;
 		}
 		else

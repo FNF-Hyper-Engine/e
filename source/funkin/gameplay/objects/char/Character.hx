@@ -33,9 +33,13 @@ class Character extends FunkinSprite
 
 	public static function parseCharacterFile(json:String = 'bf'):CharacterFile
 	{
-		var fat = Assets.getText('assets/shared/characters/$json.json');
+		var fat = '';
+		if (Assets.exists('assets/shared/characters/$json.json'))
+			fat = Assets.getText('assets/shared/characters/$json.json')
+		else
+			fat = Assets.getText('assets/shared/characters/bf.json');
 
-		var data =  Json.parse(fat);
+		var data = Json.parse(fat);
 
 		// Extract the fields from the JSON data
 		var hoe:CharacterFile = {

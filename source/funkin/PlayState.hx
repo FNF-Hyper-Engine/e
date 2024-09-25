@@ -49,10 +49,10 @@ class PlayState extends MusicBeatState
 
 	override public function create()
 	{
-		presongLoad();
-
 		if (SONG == null)
-			SONG = Song.loadFromJson('milf-hard', 'milf');
+			SONG = Song.loadFromJson('test', 'test');
+
+		presongLoad();
 
 		Conductor.mapBPMChanges(SONG);
 		Conductor.changeBPM(SONG.bpm);
@@ -109,9 +109,12 @@ class PlayState extends MusicBeatState
 					var sustainNote:Note = new Note(daStrumTime + (Conductor.stepCrochet * susNote) + Conductor.stepCrochet, daNoteData, oldNote, true);
 					height += sustainNote.height;
 					sustainNote.mustPress = gottaHitNote;
-					sustainNote.offset.x -= sustainNote.width / 2;
-					sustainNote.offset.y -= 2.5;
-					sustainNote.makeGraphic(1, 1);
+					sustainNote.offset.x -= sustainNote.width;
+					if (downScroll == false)
+						sustainNote.offset.y -= 2.5;
+					else
+						sustainNote.offset.y += 2.5;
+					 sustainNote.makeGraphic(1, 1);
 					sustainNote.visible = false;
 					unspawnNotes.push(sustainNote);
 				}
@@ -138,7 +141,7 @@ class PlayState extends MusicBeatState
 				s.scale.y = 1;
 				if (susLength > 0)
 				{
-					unspawnNotes.push(actualNote);
+						unspawnNotes.push(actualNote);
 					function sortByShit(Obj1:Note, Obj2:Note):Int
 					{
 						return sortNotes(FlxSort.ASCENDING, Obj1, Obj2);
@@ -241,9 +244,11 @@ class PlayState extends MusicBeatState
 				unspawnNotes.splice(index, 1);
 			}
 		}
+
 		if (FlxG.sound.music != null)
 			Conductor.songPosition = FlxG.sound.music.time;
 
+		vocals.volume = FlxG.sound.music.volume;
 		keyShit(elapsed);
 		FlxG.camera.zoom = FlxMath.lerp(defaultCamZoom, FlxG.camera.zoom, 0.95);
 		if (health > 2)
@@ -285,11 +290,11 @@ class PlayState extends MusicBeatState
 	{
 		instance = this;
 
-		bf = new Character();
+		bf = new Character(SONG.player1);
 		add(bf);
-		dad = new Character();
+		dad = new Character(SONG.player2);
 		add(dad);
-		gf = new Character();
+		gf = new Character(SONG.player3);
 		add(gf);
 
 		cpuStrums = new StrumLine(60, 50, 0);
@@ -309,9 +314,12 @@ class PlayState extends MusicBeatState
 		add(playerStrums.notes);
 		add(playerStrums);
 
+		var d = dad.jsonFile.healthColors;
+		var b = bf.jsonFile.healthColors;
+
 		healthBar = new FlxBar(0, 0, RIGHT_TO_LEFT, 600, 19, this, 'health', 0.0, 2.0);
 
-		healthBar.createFilledBar(0xFFFF0000, 0xFF66FF33, true, FlxColor.BLACK);
+		healthBar.createFilledBar(FlxColor.fromRGB(d[0], d[1], d[2]), FlxColor.fromRGB(b[0], b[1], b[2]), true, FlxColor.BLACK);
 		healthBar.screenCenter(X);
 		healthBar.y = FlxG.height - Note.swagWidth;
 		add(healthBar);
@@ -332,7 +340,8 @@ class PlayState extends MusicBeatState
 		{
 			var top = cpuStrums.y;
 			var bottom = healthBar.y;
-			playerStrums.y = bottom - Note.swagWidth / 2;
+			playerStrums.y = bottom - Note.swagWidth * 0.4;
+			cpuStrums.y = bottom - Note.swagWidth * 0.4;
 			healthBar.y = top + 50;
 			progressDial.y = bottom - 10;
 			progressDial.x = 0;
@@ -352,7 +361,8 @@ class PlayState extends MusicBeatState
 			enabled = 'DISABLED';
 		botplay = val;
 		textidk.text = 'BOTPLAY $enabled';
-		textidk.screenCenter(X);
+		textidk.x = healthBar.x;
+
 		return val;
 	}
 
@@ -389,32 +399,43 @@ class PlayState extends MusicBeatState
 			var hitval = 'static';
 			playerStrums.notes.forEach(function(note:Note)
 			{
+				if (note.strumTime <= Conductor.songPosition - 169 && !note.wasGoodHit && note.mustPress)
+				{
+					health -= 0.03;
+					note.kill();
+					playerStrums.notes.remove(note, true);
+					note.destroy();
+				}
+
 				if (note.canBeHit
 					&& note.noteData == i
 					&& key
 					&& !keyShit2[i] == true
 					&& !note.pressed
-					|| note.strumTime <= Conductor.songPosition + 5
+					|| note.strumTime <= Conductor.songPosition
 					&& playerStrums.botStrum
 					|| note.isSustainNote
 					&& note.canBeHit
 					&& playerStrums.botStrum
+					&& !note.pressed
 					&& !note.pressed)
 				{
+					note.pressed = true;
 					hitval = 'confirm';
 
 					playerStrums.invalidateNote(note, true);
 					var fucker:Float = 0.005;
 
-					health += 0.005;
+					health += 0.025;
 					note.wasGoodHit = true;
 					note.pressed = true;
 				}
 				else if (note.isSustainNote && keyShit3[note.noteData] && note.canBeHit && note.mustPress && !note.pressed)
 				{
+					note.pressed = true;
 					hitval = 'confirm';
 					note.wasGoodHit = true;
-					health += 0.00025;
+
 					playerStrums.invalidateNote(note, true);
 					note.pressed = true;
 				}

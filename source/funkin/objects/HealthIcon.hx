@@ -48,7 +48,7 @@ class HealthIcon extends FunkinSprite
 					loadGraphic(Paths.image('icons/icon-' + newChar), true, 150, 150);
 				else
 				{
-					loadGraphic(Paths.image('icons/icon-empty'));
+					loadGraphic(Paths.image('icons/icon-empty'),true,150,150);
 				}
 				animation.add(newChar, [0, 1], 0, false, isPlayer);
 			}

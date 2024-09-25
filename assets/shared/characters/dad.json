@@ -1,12 +1,12 @@
 {
-  "char": "bf",
+  "char": "dad",
   "scale": {
     "x": 1.0,
     "y": 1.0
   },
 
-  "healthIcon": "bf",
-  "healthColors": [49, 176, 209],
+  "healthIcon": "dad",
+  "healthColors": [175, 102, 206],
   "animOffsets": [
     {
       "name": "idle",

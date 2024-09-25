@@ -14,7 +14,7 @@ class StrumLine extends FunkinSprite
 		super(x, y);
 		strumNotes = new FlxTypedGroup<StrumNote>();
 		notes = new FlxTypedGroup<Note>();
-		//if (player == 0)
+		// if (player == 0)
 		//	botStrum = true;
 		for (i in 0...lanes)
 		{
@@ -39,23 +39,20 @@ class StrumLine extends FunkinSprite
 			strumNote.scale.set(scale.x * 0.7, scale.y * 0.7);
 			strumNote.y = y;
 		});
-	
+
 		notes.forEach(function(daNote:Note)
 		{
 			var roundedSpeed:Float = FlxMath.roundDecimal(scrollSpeed, 2);
 			var fakeCrochet:Float = (60 / PlayState.SONG.bpm) * 1000;
+
 			if (!PlayState.downScroll)
-				daNote.y = (strumNotes.members[daNote.noteData].y
-					+ 0.45
-					- (Conductor.songPosition - daNote.strumTime) * (0.45 * FlxMath.roundDecimal(scrollSpeed, 2)));
+				daNote.y = (strumNotes.members[daNote.noteData].y + 0.45 - (Conductor.songPosition - daNote.strumTime) * (0.45 * roundedSpeed));
 			else
 			{
-				daNote.y = (strumNotes.members[daNote.noteData].y
-					+ 0.45
-					+ (Conductor.songPosition - daNote.strumTime) * (0.45 * FlxMath.roundDecimal(scrollSpeed, 2)));
+				daNote.y = (strumNotes.members[daNote.noteData].y + 0.45 + (Conductor.songPosition - daNote.strumTime) * (0.45 * roundedSpeed));
 				if (daNote.isSustainNote)
 				{
-					daNote.angle = 180;
+					daNote.flipY = true;
 				}
 			}
 			daNote.x = strumNotes.members[daNote.noteData].x;
@@ -103,7 +100,6 @@ class StrumLine extends FunkinSprite
 				invalidateNote(daNote);
 		});
 		super.update(elapsed);
-
 	}
 
 	public function invalidateNote(note:Note, strum:Bool = false)
@@ -127,8 +123,11 @@ class StrumLine extends FunkinSprite
 		if (strum)
 		{
 			var strum = strumNotes.members[note.noteData];
-            if(note.mustPress)
-			strum.playAnim('${note.noteData}confirm', true);
+			if (note.mustPress) {
+				strum.playAnim('${note.noteData}confirm', true);
+				PlayState.instance.health += note.hitHealth;
+			}
+			
 
 			if (strum.animation.curAnim.finished)
 				strum.playAnim('${note.noteData}', false);
