@@ -5,7 +5,7 @@
 
 	<!-- _________________________ Application Settings _________________________ -->
 
-	<app title="e" file="e" main="funkin.Main" version="0.0.1" company="HaxeFlixel" />
+	<app title="FNF-Hyper-Engine" file="FNF-Hyper" main="funkin.Main" version="0.0.1" company="HaxeFlixel" />
 
 
 	<app preloader="flixel.system.FlxPreloader" />
