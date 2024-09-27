@@ -104,33 +104,51 @@ class StrumLine extends FunkinSprite
 
 	public function invalidateNote(note:Note, strum:Bool = false)
 	{
-		if (!note.isSustainNote)
+		if (!note.pressed)
 		{
-			note.kill();
-			notes.remove(note, true);
-			note.destroy();
-		}
-		else
-		{
-			if (note.y <= y - note.height)
+			if (!note.isSustainNote)
 			{
 				note.kill();
 				notes.remove(note, true);
 				note.destroy();
 			}
-		}
-		//	Sys.println("[NOTE DESTROYING]: AUTO-NOTE DESTROYED AT: " + (Conductor.songPosition / 1000) + ' SECONDS');
-		if (strum)
-		{
-			var strum = strumNotes.members[note.noteData];
-			if (note.mustPress) {
-				strum.playAnim('${note.noteData}confirm', true);
-				PlayState.instance.health += note.hitHealth;
+			else
+			{
+				if (note.y <= y - note.height)
+				{
+					note.kill();
+					notes.remove(note, true);
+					note.destroy();
+				}
 			}
-			
+			//	Sys.println("[NOTE DESTROYING]: AUTO-NOTE DESTROYED AT: " + (Conductor.songPosition / 1000) + ' SECONDS');
+			if (!note.mustPress)
+			{
+				var convertedString:String = PlayState.instance.coolAnims[note.noteData];
+				var dad:Character = PlayState.instance.dad;
+				dad.playAnim(convertedString, true);
+				trace('Opponent likes to sing $convertedString' + '.');
+			}
+			else if (note.mustPress)
+			{
+				var convertedString:String = PlayState.instance.coolAnims[note.noteData];
+				var boyfriend:Character = PlayState.instance.bf;
+				boyfriend.playAnim(convertedString, true);
+			}
 
-			if (strum.animation.curAnim.finished)
-				strum.playAnim('${note.noteData}', false);
+			if (strum)
+			{
+				var strum = strumNotes.members[note.noteData];
+				if (note.mustPress)
+				{
+					strum.playAnim('${note.noteData}confirm', true);
+					PlayState.instance.health += note.hitHealth;
+				}
+
+				if (strum.animation.curAnim.finished)
+					strum.playAnim('${note.noteData}', false);
+			}
 		}
+		note.pressed = true;
 	}
 }

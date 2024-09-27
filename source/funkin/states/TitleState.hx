@@ -1,7 +1,5 @@
 package funkin.states;
 
-
-
 class TitleState extends MusicBeatState
 {
 	#if flxanimate
@@ -16,9 +14,6 @@ class TitleState extends MusicBeatState
 	var credTextShit:Alphabet;
 	var textGroup:FlxGroup;
 	var ngSpr:FlxSprite;
-
-
-
 
 	var logo:FunkinSprite;
 	var curWacky:Array<String> = [];
@@ -165,6 +160,8 @@ class TitleState extends MusicBeatState
 			FlxTransitionableState.skipNextTransIn = true;
 			FlxG.switchState(new PlayState());
 		}
+		else if (FlxG.keys.justPressed.ENTER && !skippedIntro)
+			skipIntro();
 		#end
 	}
 

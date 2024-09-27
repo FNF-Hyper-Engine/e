@@ -44,8 +44,8 @@ class StrumNote extends FunkinSprite
 			resetAnim -= elapsed;
 			if (resetAnim <= 0)
 			{
-				//centerOffsets();
-				//playAnim('$ID', true);
+				// centerOffsets();
+				// playAnim('$ID', true);
 				// centerOffsets();
 				resetAnim = 0;
 			}
@@ -55,7 +55,10 @@ class StrumNote extends FunkinSprite
 		if (animation.curAnim.name == '$ID' + 'confirm')
 		{
 			updateConfirmOffset();
+			alpha = 1;
 		}
+		else
+			alpha = 0.7;
 	}
 
 	function updateConfirmOffset()
@@ -65,6 +68,6 @@ class StrumNote extends FunkinSprite
 		offset.y -= 13;
 		if (animation.curAnim.finished)
 			playAnim('${ID}', false);
-		 //centerOffsets();
+		// centerOffsets();
 	}
 }

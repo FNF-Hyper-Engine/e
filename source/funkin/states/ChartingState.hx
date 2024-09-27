@@ -37,6 +37,9 @@ class ChartingState extends MusicBeatState
 {
 	var noteTypeList:Array<String> = ['', '1 - Alt Animation', '2 - Hey!', '3 - Hurt Note'];
 
+	public var strumLineDad:StrumLine;
+	public var strumLineBF:StrumLine;
+
 	var eventStuff:Array<Dynamic> = [
 		['', "Nothing. Yep, that's right."],
 		[
@@ -87,9 +90,8 @@ class ChartingState extends MusicBeatState
 	 * Array of notes showing when each section STARTS in STEPS
 	 * Usually rounded up??
 	 */
-
-
 	public static var lastSection:Int = 0;
+
 	private static var lastSong:String = '';
 
 	var bpmTxt:FlxText;
@@ -221,7 +223,9 @@ class ChartingState extends MusicBeatState
 		add(bpmTxt);
 
 		strumLine = new FlxSprite(0, 50).makeGraphic(Std.int(GRID_SIZE * 9), 4);
+
 		add(strumLine);
+		generateHuhaa();
 
 		camPos = new FlxObject(0, 0, 1, 1);
 		camPos.setPosition(strumLine.x + CAM_OFFSET, strumLine.y);
@@ -744,13 +748,13 @@ class ChartingState extends MusicBeatState
 			// vocals.stop();
 		}
 
-		//var file:String = Paths.voices(currentSongName);
+		// var file:String = Paths.voices(currentSongName);
 		vocals = new FlxSound();
-		//if (OpenFlAssets.exists(file))
-		//{
-			//vocals.loadEmbedded(file);
+		// if (OpenFlAssets.exists(file))
+		// {
+		// vocals.loadEmbedded(file);
 		//	FlxG.sound.list.add(vocals);
-	//	}
+		//	}
 		generateSong();
 		FlxG.sound.music.pause();
 		Conductor.songPosition = sectionStartTime();
@@ -938,6 +942,8 @@ class ChartingState extends MusicBeatState
 		_song.song = UI_songTitle.text;
 
 		strumLine.y = getYfromStrum((Conductor.songPosition - sectionStartTime()) / curZoom % (Conductor.stepCrochet * _song.notes[curSection].lengthInSteps));
+		strumLineBF.y = strumLine.y - 34;
+		strumLineDad.y = strumLine.y - 34;
 		camPos.y = strumLine.y;
 
 		if (curBeat % 4 == 0 && curStep >= 16 * (curSection + 1))
@@ -1038,7 +1044,7 @@ class ChartingState extends MusicBeatState
 					vocals.stop();
 
 				var songName:String = PlayState.SONG.song.toLowerCase();
-			
+
 				FlxG.switchState(new PlayState());
 			}
 
@@ -1233,7 +1239,7 @@ class ChartingState extends MusicBeatState
 							soundToPlay = 'GF_';
 						}
 						soundToPlay += Std.string(data + 1);
-						//FlxG.sound.play(Paths.sound(soundToPlay));
+						// FlxG.sound.play(Paths.sound(soundToPlay));
 						playedSound[data] = true;
 					}
 				}
@@ -1247,7 +1253,7 @@ class ChartingState extends MusicBeatState
 			var lastMetroStep:Int = Math.floor(((lastConductorPos + metronomeOffsetStepper.value) / metroInterval) / 1000);
 			if (metroStep != lastMetroStep)
 			{
-				//FlxG.sound.play(Paths.sound('Metronome_Tick'));
+				// FlxG.sound.play(Paths.sound('Metronome_Tick'));
 				// trace('Ticked');
 			}
 		}
@@ -1529,6 +1535,20 @@ class ChartingState extends MusicBeatState
 				}
 			}
 		}
+	}
+
+	function generateHuhaa()
+	{
+		strumLineDad = new StrumLine(2, 50);
+		strumLineDad.scale.set(0.37, 0.37);
+
+		strumLineBF = new StrumLine(41 * 4, 0);
+		strumLineBF.scale.set(0.37, 0.37);
+
+		add(strumLineDad);
+		add(strumLineBF);
+		add(strumLineDad.strumNotes);
+		add(strumLineBF.strumNotes);
 	}
 
 	function setupNoteData(i:Array<Dynamic>, isNextSection:Bool):Note

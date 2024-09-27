@@ -8,11 +8,14 @@ class FunkinSprite extends FlxSprite
 	{
 		super(x, y);
 		hitbox = new FlxSprite();
+		antialiasing = true;
+	
 	}
 
 	public function playAnim(Animation:String, Force:Bool = false, Reversed:Bool = false, Frame:Int = 0)
 	{
 		animation.play(Animation, Force, Reversed, Frame);
+		antialiasing = true;
 	}
 
 	function addByPrefix(Name:String, Prefix:String, FrameRate:Float = 27, Looped:Bool = false, FlipX = false, FlipY = false)
@@ -31,6 +34,7 @@ class FunkinSprite extends FlxSprite
 		// Cancel all tweens so they don't continue to run on a destroyed sprite.
 		// This prevents crashes.
 		FlxTween.cancelTweensOf(this);
+
 		super.destroy();
 	}
 }

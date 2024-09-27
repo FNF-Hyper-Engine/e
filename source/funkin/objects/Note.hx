@@ -91,7 +91,7 @@ class Note extends FunkinSprite
 			else
 				canBeHit = false;
 
-			if (strumTime < Conductor.songPosition - 173) //(Conductor.safeZoneOffset * 0.7))
+			if (strumTime < Conductor.songPosition - 173) // (Conductor.safeZoneOffset * 0.7))
 				tooLate = true;
 		}
 		else
@@ -116,7 +116,7 @@ class Note extends FunkinSprite
 	{
 		clipRect = rect;
 
-		if (frames != null)
+		if (frames != null && isSustainNote)
 			frame = frames.frames[animation.frameIndex];
 
 		return rect;
