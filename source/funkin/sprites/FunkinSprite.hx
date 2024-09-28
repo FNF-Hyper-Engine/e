@@ -18,7 +18,7 @@ class FunkinSprite extends FlxSprite
 		antialiasing = true;
 	}
 
-	function addByPrefix(Name:String, Prefix:String, FrameRate:Float = 27, Looped:Bool = false, FlipX = false, FlipY = false)
+	public	function addByPrefix(Name:String, Prefix:String, FrameRate:Float = 27, Looped:Bool = false, FlipX = false, FlipY = false)
 	{
 		animation.addByPrefix(Name, Prefix, 24, Looped, FlipX, FlipY);
 	}

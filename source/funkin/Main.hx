@@ -8,12 +8,13 @@ class Main extends Sprite
 	{
 		super();
 		#if (!android)
-		addChild(new FlxGame(0, 0, TitleState #if (!html5), 100, 100 #end));
+		addChild(new FlxGame(0, 0, TitleState #if (!html5) #end));
 		#else
 		addChild(new FlxGame(0, 0, PlayState));
 		#end
 		Mods.pushGlobalMods();
 		var fps_mem:FPS_Mem = new FPS_Mem(10, 10, 0xffffff);
+		CursorLoader.skin = 'default';
 
 		addChild(fps_mem);
 	}

@@ -1,9 +1,6 @@
 package funkin;
 
-import flixel.FlxBasic;
-import flixel.FlxObject;
-import funkin.gameplay.objects.char.Character.CharacterFile;
-import funkin.converters.ChartConvertUtil;
+import funkin.scripting.HScript;
 
 class PlayState extends MusicBeatState
 {
@@ -41,7 +38,7 @@ class PlayState extends MusicBeatState
 
 	public var coolAnims:Array<String> = ['singLEFT', 'singDOWN', 'singUP', 'singRIGHT'];
 
-	public var defaultCamZoom:Float = 1.05;
+	public var defaultCamZoom:Float = 0.9;
 	public var health:Float = 1;
 
 	public var healthBar:FlxBar;
@@ -61,16 +58,32 @@ class PlayState extends MusicBeatState
 	var camGame:FlxCamera;
 	var camHUD:FlxCamera;
 	var uiGroup:FlxTypedGroup<FlxBasic>;
-	var curStage:String = 'stage';
+	var curStage:String = 'default';
+
+	public var scripts:Array<HScript>;
 
 	override public function create()
 	{
+		instance = this;
+
 		if (SONG == null)
-			SONG = Song.loadFromJson('bopeebo-hard', 'bopeebo');
+			SONG = Song.loadFromJson('test', 'test');
+
+		scripts = new Array<HScript>();
+		if (Assets.exists('assets/data/${SONG.song.toLowerCase()}.hx'))
+		{
+			var hscript:HScript = new HScript('assets/data/${SONG.song.toLowerCase()}.hx', '${SONG.song.toLowerCase()}.hx');
+			scripts.push(hscript);
+		}
+		recursiveLoop();
 
 		camGame = new FlxCamera();
 		camHUD = new FlxCamera();
 		camHUD.bgColor.alpha = 0;
+
+		// StageManager.reset();
+		StageManager.init(curStage, camGame);
+		add(StageManager.stageBack);
 
 		uiGroup = new FlxTypedGroup();
 		uiGroup.cameras = [camHUD];
@@ -80,8 +93,9 @@ class PlayState extends MusicBeatState
 		FlxG.cameras.add(camHUD, false);
 		FlxCamera.defaultCameras = [camGame];
 
+		call('onCreate');
 		presongLoad();
-
+		// Conductor.songPosition = -Conductor.crochet  * 5;
 		Conductor.mapBPMChanges(SONG);
 		Conductor.changeBPM(SONG.bpm);
 
@@ -200,8 +214,44 @@ class PlayState extends MusicBeatState
 
 		postCrap();
 
+		call('onCreatePost');
+
 		super.create();
 		startCountdown();
+	}
+
+	function recursiveLoop(directory:String = "./mods/globalScripts/")
+	{
+		#if sys
+		if (sys.FileSystem.exists(directory))
+		{
+			trace("directory found: " + directory);
+			for (file in sys.FileSystem.readDirectory(directory))
+			{
+				var path = haxe.io.Path.join([directory, file]);
+				if (!sys.FileSystem.isDirectory(path))
+				{
+					if (path.endsWith('.hx'))
+					{
+						var hscript:HScript = new HScript(path, 'path', true);
+						scripts.push(hscript);
+					}
+
+					// do something with file
+				}
+				else
+				{
+					var directory = haxe.io.Path.addTrailingSlash(path);
+					trace("directory found: " + directory);
+					recursiveLoop(directory);
+				}
+			}
+		}
+		else
+		{
+			trace('"$directory" does not exist');
+		}
+		#end
 	}
 
 	function postCrap()
@@ -256,18 +306,38 @@ class PlayState extends MusicBeatState
 		ct.startass();
 	}
 
-	function startSong()
+	function startSong():Void
 	{
 		startingSong = false;
 		FlxG.sound.playMusic(Paths.inst(SONG.song.toLowerCase()), 1, false);
+		FlxG.sound.music.onComplete = songEnd;
 		FlxG.sound.music.pitch = 1;
 		vocals.play();
+	}
+
+	function songEnd():Void
+	{
+		remove(cpuStrums.notes);
+		remove(playerStrums.notes);
+
+		camGame.fade(FlxColor.BLACK, 1);
+		camHUD.fade(FlxColor.BLACK, 1);
+		FlxTween.tween(this, {defaultCamZoom: 1.5});
+		new FlxTimer().start(1, function(FlxTime:FlxTimer)
+		{
+			FlxG.switchState(new funkin.states.MainMenuState());
+		});
 	}
 
 	override function destroy()
 	{
 		vocals.stop();
 		vocals.destroy();
+		FlxG.sound.music.stop();
+		FlxG.sound.music.kill();
+		FlxG.sound.music.destroy();
+		StageManager.reset();
+
 		super.destroy();
 	}
 
@@ -293,6 +363,8 @@ class PlayState extends MusicBeatState
 
 		vocals.volume = FlxG.sound.music.volume;
 
+		call('onUpdate', elapsed);
+
 		keyShit(elapsed);
 
 		camHUD.zoom = FlxMath.lerp(1, camHUD.zoom, 0.95);
@@ -306,8 +378,19 @@ class PlayState extends MusicBeatState
 		if (playerStrums != null)
 			playerStrums.botStrum = botplay;
 
-		scoreTxt.text = '${Conductor.songPosition / 1000} / ${FlxG.sound.music.length / 1000}';
+		var secs = Conductor.songPosition / 1000;
+		var length = FlxG.sound.music.length / 1000;
+
+		scoreTxt.text = 'Current Scripts Running: ${scripts.length}';
+
 		super.update(elapsed);
+
+		if (healthBar.percent < 5)
+		{
+			FlxTransitionableState.skipNextTransOut = true;
+			FlxTransitionableState.skipNextTransIn = true;
+			FlxG.switchState(new GameOver());
+		}
 
 		//////////////////////trace(getSongPercent(Conductor.songPosition, FlxG.sound.music.endTime));
 		if (iconP1 != null && iconP2 != null)
@@ -333,21 +416,22 @@ class PlayState extends MusicBeatState
 			else
 				iconP2.animation.curAnim.curFrame = 0;
 		}
+
+		call('onUpdatePost', elapsed);
 	}
 
 	function presongLoad()
 	{
-		instance = this;
-
 		dad = new Character(SONG.player2);
-		dad.x = 50;
+		dad.setPosition(100, 100);
 		add(dad);
 
 		gf = new Character(SONG.player3);
-		gf.alpha = 0;
+		gf.setPosition(400, 130);
 		add(gf);
 
 		bf = new Character(SONG.player1);
+		bf.setPosition(770, 450);
 		add(bf);
 
 		cpuStrums = new StrumLine(60, 50, 0);
@@ -588,6 +672,15 @@ class PlayState extends MusicBeatState
 		notes.sort(sortNotes, FlxSort.DESCENDING);
 	}
 
+	public function call(func:String, ?var1, ?var2, ?var3)
+	{
+		for (i in 0...scripts.length)
+		{
+			var script:HScript = scripts[i];
+			script.call(func, var1, var2, var3);
+		}
+	}
+
 	override function beatHit()
 	{
 		super.beatHit();
@@ -598,11 +691,14 @@ class PlayState extends MusicBeatState
 		iconP1.updateHitbox();
 		iconP2.updateHitbox();
 
+		call('onBeatHit', curBeat);
+
 		if (SONG.notes[Math.floor(curStep / 16)] != null)
 		{
 			if (SONG.notes[Math.floor(curStep / 16)].changeBPM)
 			{
 				Conductor.changeBPM(SONG.notes[Math.floor(curStep / 16)].bpm);
+
 				FlxG.log.add('CHANGED BPM!');
 			}
 			// else
@@ -623,6 +719,8 @@ class PlayState extends MusicBeatState
 		//////////////////////trace('Current Section is ${curSection * 1}.');
 		camGame.zoom += 0.015;
 		camHUD.zoom += 0.03;
+
+		call('onSectionHit', curSection);
 
 		if (SONG.needsVoices)
 		{

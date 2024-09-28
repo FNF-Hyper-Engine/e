@@ -158,7 +158,7 @@ class TitleState extends MusicBeatState
 			FlxG.sound.music.stop();
 			FlxG.sound.music.time = 0;
 			FlxTransitionableState.skipNextTransIn = true;
-			FlxG.switchState(new PlayState());
+			FlxG.switchState(new MainMenuState());
 		}
 		else if (FlxG.keys.justPressed.ENTER && !skippedIntro)
 			skipIntro();

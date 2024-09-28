@@ -56,9 +56,9 @@ class Character extends FunkinSprite
 
 		if (Assets.exists(Paths.image('characters/${jsonFile.char}')))
 			atlasFrames('characters/${jsonFile.char}');
-		else
+		else {
 			trace('Warning: ${Paths.image('characters/${jsonFile.char}')} doesnt exist. loading Default File: Boyfriend. ');
-
+		}
 		trace(jsonFile.scale[0], jsonFile.scale[1]);
 
 		// var animationsArray = jsonFilcamOffsetsts;
@@ -79,6 +79,13 @@ class Character extends FunkinSprite
 				addOffset("singDOWN", 0, -30);
 
 				playAnim('idle');
+
+			case 'deadbf':
+				addByPrefix('dies', 'BF dies', 24);
+				addByPrefix('loop', 'BF Dead Loop', 24, true);
+				addByPrefix('confirm', 'BF Dead confirm', 24);
+
+				playAnim('dies');
 
 			case 'bf':
 				addByPrefix('idle', 'BF idle dance', 24, true);
@@ -114,7 +121,7 @@ class Character extends FunkinSprite
 		if (Assets.exists('assets/shared/characters/$json.json'))
 			fat = Assets.getText('assets/shared/characters/$json.json')
 		else
-			fat = Assets.getText('assets/shared/characters/bf.json');
+			fat = Assets.getText('assets/shared/characters/empty.json');
 
 		var data = Json.parse(fat);
 

@@ -23,11 +23,18 @@ class MusicBeatState extends FlxUIState
 
 	override function create()
 	{
+
+		
 		#if (!web)
 		// TitleState.soundExt = '.ogg';
 		#end
 
 		super.create();
+		#if windows
+	//	trace(223);
+		System.gc();
+		#end
+
 	}
 
 	override function update(elapsed:Float)

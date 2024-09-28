@@ -1,5 +1,6 @@
 package funkin.states;
 
+import haxe.ui.backend.flixel.CursorHelper;
 import funkin.song.Conductor.BPMChangeEvent;
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -39,6 +40,7 @@ class ChartingState extends MusicBeatState
 
 	public var strumLineDad:StrumLine;
 	public var strumLineBF:StrumLine;
+	public var songBar:FlxBar;
 
 	var eventStuff:Array<Dynamic> = [
 		['', "Nothing. Yep, that's right."],
@@ -106,7 +108,7 @@ class ChartingState extends MusicBeatState
 
 	public static var GRID_SIZE:Int = 40;
 
-	var CAM_OFFSET:Int = 360;
+	var CAM_OFFSET:Int = 40 * 4;
 
 	var dummyArrow:FlxSprite;
 
@@ -139,6 +141,7 @@ class ChartingState extends MusicBeatState
 	var currentSongName:String;
 	var zoomMult:Int = 1; // 0 = 0.5 actually lmao
 	var zoomTxt:FlxText;
+	var songPos:Float = 0;
 
 	private var blockPressWhileTypingOn:Array<FlxUIInputText> = [];
 	private var blockPressWhileScrolling:Array<FlxUIDropDownMenuCustom> = [];
@@ -151,6 +154,8 @@ class ChartingState extends MusicBeatState
 		bg.scrollFactor.set();
 		bg.color = 0xFF222222;
 		add(bg);
+
+
 
 		gridLayer = new FlxTypedGroup<FlxSprite>();
 		add(gridLayer);
@@ -244,7 +249,7 @@ class ChartingState extends MusicBeatState
 		UI_box = new FlxUITabMenu(null, tabs, true);
 
 		UI_box.resize(300, 400);
-		UI_box.x = FlxG.width / 2 + GRID_SIZE / 2;
+		UI_box.x = GRID_SIZE * 2;
 		UI_box.y = 25;
 
 		var tipText:FlxText = new FlxText(UI_box.x, UI_box.y + UI_box.height + 6, 0, "W/S or Mouse Wheel - Change Conductor's strum time
@@ -764,6 +769,12 @@ class ChartingState extends MusicBeatState
 	function generateSong()
 	{
 		FlxG.sound.playMusic(Paths.inst(currentSongName), 0.6, false);
+
+		songBar = new FlxBar(0, 0, LEFT_TO_RIGHT, FlxG.width, 20, this, 'songPos', 0, FlxG.sound.music.length, false);
+		songBar.scrollFactor.set();
+		songBar.createFilledBar(FlxColor.BLACK,FlxColor.WHITE,false);
+		songBar.numDivisions = 9999;
+        add(songBar); 
 		if (check_mute_inst != null && check_mute_inst.checked)
 			FlxG.sound.music.volume = 0;
 
@@ -772,6 +783,7 @@ class ChartingState extends MusicBeatState
 			generateSong();
 			FlxG.sound.music.pause();
 			Conductor.songPosition = 0;
+		
 			if (vocals != null)
 			{
 				vocals.play();
@@ -939,6 +951,7 @@ class ChartingState extends MusicBeatState
 			changeSection();
 		}
 		Conductor.songPosition = FlxG.sound.music.time;
+		songPos = Conductor.songPosition;
 		_song.song = UI_songTitle.text;
 
 		strumLine.y = getYfromStrum((Conductor.songPosition - sectionStartTime()) / curZoom % (Conductor.stepCrochet * _song.notes[curSection].lengthInSteps));
@@ -1287,6 +1300,7 @@ class ChartingState extends MusicBeatState
 
 		gridBlackLine = new FlxSprite(gridBG.x + GRID_SIZE).makeGraphic(2, Std.int(gridBG.height), FlxColor.BLACK);
 		gridLayer.add(gridBlackLine);
+
 		updateGrid();
 	}
 

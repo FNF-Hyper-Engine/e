@@ -5,7 +5,7 @@
 
 	<!-- _________________________ Application Settings _________________________ -->
 
-	<app title="FNF-Hyper-Engine" file="FNF-Hyper" main="funkin.Main" version="0.0.1" company="HaxeFlixel" />
+	<app title="Funkin' Hyper" file="Funkin' Hyper" main="funkin.Main" version="0.1.0" company="HaxeFlixel" />
 
 
 	<app preloader="flixel.system.FlxPreloader" />
@@ -32,8 +32,9 @@
 	<set name="BUILD_DIR" value="export" />
 	<source path="source" />
 	<assets path="assets" exclude='*.pdn' />
+	<assets path="mods" exclude='*.fla' />
 	<assets path="include/windows" library="include" rename="" if="windows" />
-
+	<template path="assets" exclude='*.pdn' />
 	<!-- _______________________________ Libraries ______________________________ -->
 
 	<haxelib name="flixel" />
@@ -47,9 +48,10 @@
 	<!--In
 	case you want to use the addons package-->
 	<haxelib name="flixel-addons" />
-	<haxelib name="moonchart" />
-	<haxelib name="tjson" />
 
+	<haxelib name="tjson" />
+	<haxelib name="hscript" />
+	
 
 	<!--In
 	case you want to use the ui package-->
