@@ -39,6 +39,8 @@ class Character extends FunkinSprite
 	public var debugMode:Bool = false;
 
 	public var isPlayer:Bool = false;
+	public var dancer:Bool = false;
+	public var danced:Bool = false;
 	public var curCharacter:String = 'bf';
 
 	public var holdTimer:Float = 0;
@@ -56,15 +58,22 @@ class Character extends FunkinSprite
 
 		if (Assets.exists(Paths.image('characters/${jsonFile.char}')))
 			atlasFrames('characters/${jsonFile.char}');
-		else {
+		else
+		{
 			trace('Warning: ${Paths.image('characters/${jsonFile.char}')} doesnt exist. loading Default File: Boyfriend. ');
 		}
-		trace(jsonFile.scale[0], jsonFile.scale[1]);
+		//trace(jsonFile.scale[0], jsonFile.scale[1]);
 
 		// var animationsArray = jsonFilcamOffsetsts;
 
 		switch jsonFile.char
 		{
+			case 'gf':
+				dancer = true;
+				addByIndices('danceLeft', 'GF Dancing Beat', [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], "", 24, false);
+				addByIndices('danceRight', 'GF Dancing Beat', [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29], "", 24, false);
+				playAnim('danceRight');
+
 			case 'dad':
 				addByPrefix('idle', 'Dad idle dance', 24, true);
 				addByPrefix('singLEFT', 'dad sing note right', 24);
@@ -127,18 +136,21 @@ class Character extends FunkinSprite
 
 		// Extract the fields from the JSON data
 		var hoe:CharacterFile = cast data;
-		trace('Returning: ${hoe}');
+		// trace('Returning: ${hoe}');
 		return hoe;
 	}
 
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
-		if (animation.curAnim.name.contains('sing')
-			&& animation.curAnim.finished
-			|| animation.curAnim.name.contains('idle')
-			&& animation.curAnim.finished)
-			playAnim('idle');
+		if (!dancer)
+		{
+			if (animation.curAnim.name.contains('sing')
+				&& animation.curAnim.finished
+				|| animation.curAnim.name.contains('idle')
+				&& animation.curAnim.finished)
+				playAnim('idle');
+		}
 	}
 
 	public static function parseJSONshit(rawJson:String):CharacterFile
@@ -166,8 +178,12 @@ class Character extends FunkinSprite
 		animOffsets[name] = [x, y];
 	}
 
-	public function quickAnimAdd(name:String, anim:String)
+	public function dance()
 	{
-		animation.addByPrefix(name, anim, 24, false);
+		danced = !danced;
+		if (danced)
+			playAnim('danceLeft');
+		else
+			playAnim('danceRight');
 	}
 }

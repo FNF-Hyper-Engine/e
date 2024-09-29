@@ -24,21 +24,21 @@ class MainMenuState extends MusicBeatState
 			menuCrap = new FunkinSprite(0, 60 + (i * 160));
 			menuCrap.atlasFrames('mainmenu/$string');
 			menuCrap.addByPrefix('idle', '$string idle', 30, true);
-            menuCrap.ID = i;
+			menuCrap.ID = i;
 			menuCrap.addByPrefix('selected', '$string selected', 30, true);
 			menuCrap.playAnim('idle');
 			menuCrap.screenCenter(X);
 			//	menuCrap.y += menuCrap.height * i;
 
 			selectables.add(menuCrap);
-			menuCrap.scrollFactor.set(0.1,0.5);
+			menuCrap.scrollFactor.set(0.1, 0.5);
 			menuCrap.antialiasing = true;
 		}
 		add(selectables);
 
 		camFollow = new FlxObject(0, 0, 1, 1);
 		add(camFollow);
-       
+
 		FlxG.camera.follow(camFollow, null, 0.06);
 
 		changeItem();
@@ -58,6 +58,7 @@ class MainMenuState extends MusicBeatState
 
 		if (!selectedSomethin)
 		{
+			#if (!android)
 			if (FlxG.keys.justPressed.UP)
 			{
 				FlxG.sound.play('assets/sounds/scrollMenu.ogg');
@@ -97,42 +98,38 @@ class MainMenuState extends MusicBeatState
 					});
 				});
 			}
-		}
-
-		super.update(elapsed);
-
-		selectables.forEach(function(spr:FlxSprite)
-		{
-			spr.screenCenter(X);
-		});
-
-		if (FlxG.keys.justPressed.ENTER && instant)
-		{
-			instant = false;
-		}
-	}
-
-	function changeItem(huh:Int = 0)
-	{
-		curSelected += huh;
-
-		if (curSelected >= menuItems.length)
-			curSelected = 0;
-		if (curSelected < 0)
-			curSelected = menuItems.length - 1;
-
-		selectables.forEach(function(spr:FlxSprite)
-		{
-			spr.animation.play('idle');
-
-			if (spr.ID == curSelected)
-			{
-				spr.animation.play('selected');
-                FlxG.camera.follow(camFollow, null, 0.06);
-				camFollow.setPosition(spr.getGraphicMidpoint().x, spr.getGraphicMidpoint().y);
+			#end
 			}
+			
+			super.update(elapsed);
 
-			spr.updateHitbox();
-		});
+			selectables.forEach(function(spr:FlxSprite)
+			{
+				spr.screenCenter(X);
+			});
+		}
+
+		function changeItem(huh:Int = 0)
+		{
+			curSelected += huh;
+
+			if (curSelected >= menuItems.length)
+				curSelected = 0;
+			if (curSelected < 0)
+				curSelected = menuItems.length - 1;
+
+			selectables.forEach(function(spr:FlxSprite)
+			{
+				spr.animation.play('idle');
+
+				if (spr.ID == curSelected)
+				{
+					spr.animation.play('selected');
+					FlxG.camera.follow(camFollow, null, 0.06);
+					camFollow.setPosition(spr.getGraphicMidpoint().x, spr.getGraphicMidpoint().y);
+				}
+
+				spr.updateHitbox();
+			});
+		}
 	}
-}

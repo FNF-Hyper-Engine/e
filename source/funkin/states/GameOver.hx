@@ -35,15 +35,28 @@ class GameOver extends MusicBeatState
 		super.update(elapsed);
 		overChar.x = FlxMath.lerp((FlxG.width - overChar.width) / 2, overChar.x, 0.95);
 		overChar.y = FlxMath.lerp((FlxG.height - overChar.height) / 2, overChar.y, 0.95);
+		#if (!android)
 		if (FlxG.keys.justPressed.ENTER && instant)
 		{
-			instant = false;
-			FlxG.sound.music.stop();
-		
-			overChar.playAnim('confirm');
-			FlxG.camera.fade(FlxColor.BLACK, ass.length / 1000 * 0.5);
-			ass.endTime = ass.length * 0.5;
-			ass.play();
+			exit();
 		}
+		#else
+		if (FlxG.touches.getFirst() != null)
+		{
+			if (FlxG.touches.getFirst().justPressed)
+				exit();
+		}
+		#end
+	}
+
+	public function exit():Void
+	{
+		instant = false;
+		FlxG.sound.music.stop();
+
+		overChar.playAnim('confirm');
+		FlxG.camera.fade(FlxColor.BLACK, ass.length / 1000 * 0.5);
+		ass.endTime = ass.length * 0.5;
+		ass.play();
 	}
 }

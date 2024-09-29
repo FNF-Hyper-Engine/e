@@ -67,7 +67,7 @@ class PlayState extends MusicBeatState
 		instance = this;
 
 		if (SONG == null)
-			SONG = Song.loadFromJson('test', 'test');
+			SONG = Song.loadFromJson('dadbattle-hard', 'dadbattle');
 
 		scripts = new Array<HScript>();
 		if (Assets.exists('assets/data/${SONG.song.toLowerCase()}.hx'))
@@ -684,6 +684,8 @@ class PlayState extends MusicBeatState
 	override function beatHit()
 	{
 		super.beatHit();
+
+		gf.dance();
 
 		iconP1.setGraphicSize(Std.int(iconP1.width + 30));
 		iconP2.setGraphicSize(Std.int(iconP2.width + 30));

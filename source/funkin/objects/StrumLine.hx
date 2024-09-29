@@ -127,7 +127,7 @@ class StrumLine extends FunkinSprite
 				var convertedString:String = PlayState.instance.coolAnims[note.noteData];
 				var dad:Character = PlayState.instance.dad;
 				dad.playAnim(convertedString, true);
-				trace('Opponent likes to sing $convertedString' + '.');
+				//trace('Opponent likes to sing $convertedString' + '.');
 			}
 			else if (note.mustPress)
 			{
@@ -139,14 +139,17 @@ class StrumLine extends FunkinSprite
 			if (strum)
 			{
 				var strum = strumNotes.members[note.noteData];
+				
 				if (note.mustPress)
 				{
-					strum.playAnim('${note.noteData}confirm', true);
+				
 					PlayState.instance.health += note.hitHealth;
 				}
 
 				if (strum.animation.curAnim.finished)
 					strum.playAnim('${note.noteData}', false);
+
+				strum.animation.play('${note.noteData}confirm', true);
 			}
 		}
 		note.pressed = true;
