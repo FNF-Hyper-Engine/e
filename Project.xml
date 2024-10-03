@@ -87,4 +87,10 @@
 
 	<!--Place
 	custom nodes like icons here (higher priority to override the HaxeFlixel icon)-->
+
+
+
+
+	
+	<setenv name="SHOW_CONSOLE" /> <!-- on windows it shows console if start by clicking on .exe -->
 </project>

@@ -1,22 +1,19 @@
-<vbox style="padding: 5px;">
+<vbox width="55%" height="55%">
     <hbox width="100%">
         <vbox width="100%">
             <section-header text="Full Width Buttons" />
             <hbox>
                 <tabview id="tv7" width="400" height="100" styleName="full-width-buttons">
-                    <box text="Main" />
-                     <label text="FlipX"/>        
-
-                    <box />
-                    <box text="Animations" />
-             
+                    <box text="Haxe" icon="icons/logo-haxe.png" />
+                    <box text="Java" icon="icons/logo-java.png" />
+                    <box text="Javascript" icon="icons/logo-javascript.png" disabled="true" />
                 </tabview>
             </hbox>
         </vbox>
-
+        
         <vbox width="200">
             <section-header text="Options" />
             <checkbox text="Disable" onchange="tv7.disabled = this.selected" />
         </vbox>
-    </hbox>
+    </hbox>   
 </vbox>
