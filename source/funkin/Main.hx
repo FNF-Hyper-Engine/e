@@ -1,6 +1,5 @@
 package funkin;
 
-import openfl.display.DisplayObject;
 import funkin.modding.Mods;
 
 #if windows
@@ -14,8 +13,11 @@ class Main extends Sprite
 	public function new()
 	{
 		super();
+		Toolkit.theme = 'dark';
+		Toolkit.init();
+		
 		#if (!android)
-		addChild(new FlxGame(0, 0, TitleState #if (!html5),120,120 #end));
+		addChild(new FlxGame(0, 0, TitleState #if (!html5) #end));
 		#else
 		addChild(new FlxGame(0, 0, PlayState));
 		#end

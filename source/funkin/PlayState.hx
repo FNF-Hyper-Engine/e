@@ -1,6 +1,5 @@
 package funkin;
 
-import funkin.backend.CoolUtil;
 import funkin.scripting.HScript;
 
 class PlayState extends MusicBeatState
@@ -46,7 +45,7 @@ class PlayState extends MusicBeatState
 
 	public var healthBar:FlxBar;
 
-	var botplay:Bool = false;
+	public static var botplay:Bool = false;
 
 	var textidk:FlxText;
 	var scoreTxt:FlxText;
@@ -77,8 +76,8 @@ class PlayState extends MusicBeatState
 		scripts = new Array<HScript>();
 		if (Assets.exists('assets/data/${SONG.song.toLowerCase()}.hx'))
 		{
-			var hscript:HScript = new HScript('assets/data/${SONG.song.toLowerCase()}.hx', '${SONG.song.toLowerCase()}.hx');
-			scripts.push(hscript);
+			//	var hscript:HScript = new HScript('assets/data/${SONG.song.toLowerCase()}.hx', '${SONG.song.toLowerCase()}.hx');
+			//	scripts.push(hscript);
 		}
 		recursiveLoop();
 
@@ -87,7 +86,7 @@ class PlayState extends MusicBeatState
 		camHUD.bgColor.alpha = 0;
 
 		// StageManager.reset();
-		StageManager.init(curStage, camGame);
+		StageManager.init(SONG.song.toLowerCase().trim(), camGame);
 		add(StageManager.stageBack);
 
 		uiGroup = new FlxTypedGroup();
@@ -185,7 +184,7 @@ class PlayState extends MusicBeatState
 				s.playAnim('${s.noteData}end');
 				s.offset.x -= s.width * 1.1;
 				s.offset.y += 7;
-				s.scale.y = 1;
+				// s.scale.y = 1;
 				if (susLength > 0)
 				{
 					unspawnNotes.push(actualNote);
@@ -373,7 +372,7 @@ class PlayState extends MusicBeatState
 		keyShit(elapsed);
 
 		camHUD.zoom = FlxMath.lerp(1, camHUD.zoom, 0.95);
-		camGame.zoom = FlxMath.lerp(1, camHUD.zoom, 0.95);
+		camGame.zoom = FlxMath.lerp(1, camGame.zoom, 0.95);
 
 		if (health > 2)
 			health = 2;
@@ -440,6 +439,7 @@ class PlayState extends MusicBeatState
 		bf = new Character(SONG.player1);
 		bf.setPosition(770, 450);
 		add(bf);
+		StageManager.charposcrap(dad, gf, bf);
 
 		cpuStrums = new StrumLine(60, 50, 0);
 		cpuStrums.scale.set(1, 1);
@@ -557,6 +557,8 @@ class PlayState extends MusicBeatState
 
 		if (FlxG.keys.justPressed.SEVEN)
 			FlxG.switchState(new ChartingState());
+		if (FlxG.keys.justPressed.EIGHT)
+			FlxG.switchState(new CharacterEditorState(SONG.player2));
 		if (FlxG.keys.justPressed.B)
 			sebotplay(!botplay);
 

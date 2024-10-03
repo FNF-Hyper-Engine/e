@@ -15,7 +15,7 @@ typedef CharacterFile =
 	var healthColors:Array<Int>;
 
 	// Animation offsets: Array of animations with their respective offsets.
-	var animationOffsets:Array<AnimArray>;
+	var animations:Array<AnimArray>;
 
 	// Camera offsets: Array with x and y offset.
 	var camOffsets:Array<Float>;
@@ -62,9 +62,24 @@ class Character extends FunkinSprite
 		{
 			trace('Warning: ${Paths.image('characters/${jsonFile.char}')} doesnt exist. loading Default File: Boyfriend. ');
 		}
-		//trace(jsonFile.scale[0], jsonFile.scale[1]);
+		// trace(jsonFile.scale[0], jsonFile.scale[1]);
 
-		// var animationsArray = jsonFilcamOffsetsts;
+		var animationsArray = jsonFile.animations;
+		for (i in 0...animationsArray.length)
+		{
+			var anim = animationsArray[i];
+			var animName:String = anim.anim;
+			var animfps = anim.fps;
+			var prefix:String = anim.name;
+			var offsets = anim.offsets;
+			var looped = anim.loop;
+		
+
+			addByPrefix(animName, prefix, animfps, looped);
+			addOffset(animName, offsets[0], offsets[1]);
+			playAnim('idle');
+
+		}
 
 		switch jsonFile.char
 		{
@@ -73,6 +88,9 @@ class Character extends FunkinSprite
 				addByIndices('danceLeft', 'GF Dancing Beat', [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], "", 24, false);
 				addByIndices('danceRight', 'GF Dancing Beat', [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29], "", 24, false);
 				playAnim('danceRight');
+			case 'xeno':
+				addByPrefix('idle', 'Beast_IDLE');
+				playAnim("idle");
 
 			case 'dad':
 				addByPrefix('idle', 'Dad idle dance', 24, true);
@@ -97,6 +115,7 @@ class Character extends FunkinSprite
 				playAnim('dies');
 
 			case 'bf':
+				/*
 				addByPrefix('idle', 'BF idle dance', 24, true);
 				addByPrefix('singLEFT', 'BF NOTE LEFT', 24);
 				addByPrefix('singDOWN', 'BF NOTE DOWN', 24);
@@ -117,7 +136,7 @@ class Character extends FunkinSprite
 				addOffset('deathLoop', 37, 5);
 				addOffset('deathConfirm', 37, 69);
 				addOffset('scared', -4);
-
+*/
 				playAnim('idle');
 		}
 
@@ -128,7 +147,7 @@ class Character extends FunkinSprite
 	{
 		var fat = '';
 		if (Assets.exists('assets/shared/characters/$json.json'))
-			fat = Assets.getText('assets/shared/characters/$json.json')
+			fat = Assets.getText('assets/shared/characters/empty.json'); // ('assets/shared/characters/$json.json')
 		else
 			fat = Assets.getText('assets/shared/characters/empty.json');
 
@@ -143,7 +162,7 @@ class Character extends FunkinSprite
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
-		if (!dancer)
+		if (!dancer && animation.curAnim != null)
 		{
 			if (animation.curAnim.name.contains('sing')
 				&& animation.curAnim.finished

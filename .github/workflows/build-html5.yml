@@ -43,7 +43,7 @@ jobs:
           haxelib git moonchart https://github.com/MaybeMaru/moonchart --never
           haxelib install hxcpp 4.3.2 --never
           haxelib git haxeui-flixel https://github.com/haxeui/haxeui-flixel --never
-          haxelib git haxeui-flixel https://github.com/haxeui/haxeui-core --never
+          haxelib git haxeui-core https://github.com/haxeui/haxeui-core --never --skip-dependencies 
           haxelib list
           
 

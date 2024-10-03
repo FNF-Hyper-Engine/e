@@ -12,8 +12,11 @@ class StrumLine extends FunkinSprite
 	public function new(x, y, player:Int = 1, lanes:Int = 4)
 	{
 		super(x, y);
+	    
 		strumNotes = new FlxTypedGroup<StrumNote>();
 		notes = new FlxTypedGroup<Note>();
+		
+		
 		// if (player == 0)
 		//	botStrum = true;
 		for (i in 0...lanes)
@@ -65,8 +68,8 @@ class StrumLine extends FunkinSprite
 				|| daNote.mustPress
 				&& daNote.wasGoodHit)
 			{
-				var swagRect:FlxRect = daNote.clipRect;
-				if (swagRect == null)
+				var swagRect:FlxRect;
+				
 					swagRect = new FlxRect(0, 0, daNote.frameWidth, daNote.frameHeight);
 				if (daNote.y + daNote.offset.y * daNote.scale.y <= center)
 				{
@@ -148,7 +151,7 @@ class StrumLine extends FunkinSprite
 
 				if (strum.animation.curAnim.finished)
 					strum.playAnim('${note.noteData}', false);
-
+                if(note.mustPress && !PlayState.botplay )
 				strum.animation.play('${note.noteData}confirm', true);
 			}
 		}
