@@ -1,5 +1,7 @@
 package funkin;
 
+import openfl.display.DisplayObject;
+import haxe.ui.Toolkit;
 import funkin.modding.Mods;
 
 #if windows

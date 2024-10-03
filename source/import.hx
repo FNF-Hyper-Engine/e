@@ -13,6 +13,8 @@ import funkin.gameplay.objects.*;
 import funkin.gameplay.objects.char.*;
 import funkin.stage.StageManager;
 import flixel.FlxBasic;
+import funkin.backend.*;
+import funkin.states.editors.*;
 import flixel.FlxObject;
 import funkin.gameplay.objects.char.Character.CharacterFile;
 import flixel.group.FlxSpriteGroup;

@@ -1,5 +1,6 @@
 package funkin;
 
+import funkin.states.editors.CharacterEditorState;
 import funkin.scripting.HScript;
 
 class PlayState extends MusicBeatState
@@ -602,8 +603,10 @@ class PlayState extends MusicBeatState
 
 					playerStrums.invalidateNote(note, true);
 					var fucker:Float = 0.005;
-					if (!note.isSustainNote)
+					if (!note.isSustainNote) {
+						combo++;
 						popUpScore(note.strumTime);
+					}
 					health += 0.025;
 					note.wasGoodHit = true;
 					note.pressed = true;
