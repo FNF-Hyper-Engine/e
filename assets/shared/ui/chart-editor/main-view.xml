@@ -1,0 +1,22 @@
+<vbox style="padding: 5px;">
+    <hbox width="100%">
+        <vbox width="100%">
+            <section-header text="Full Width Buttons" />
+            <hbox>
+                <tabview id="tv7" width="400" height="100" styleName="full-width-buttons">
+                    <box text="Main" />
+                     <label text="FlipX"/>        
+
+                    <box />
+                    <box text="Animations" />
+             
+                </tabview>
+            </hbox>
+        </vbox>
+
+        <vbox width="200">
+            <section-header text="Options" />
+            <checkbox text="Disable" onchange="tv7.disabled = this.selected" />
+        </vbox>
+    </hbox>
+</vbox>

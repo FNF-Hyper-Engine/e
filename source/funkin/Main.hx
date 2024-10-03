@@ -1,5 +1,6 @@
 package funkin;
 
+import haxe.ui.Toolkit;
 import funkin.modding.Mods;
 
 class Main extends Sprite
@@ -7,8 +8,11 @@ class Main extends Sprite
 	public function new()
 	{
 		super();
+		Toolkit.theme = 'dark';
+		Toolkit.init();
+		
 		#if (!android)
-		addChild(new FlxGame(0, 0, TitleState #if (!html5) #end));
+		addChild(new FlxGame(0, 0, TitleState));
 		#else
 		addChild(new FlxGame(0, 0, PlayState));
 		#end

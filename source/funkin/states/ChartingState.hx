@@ -1,5 +1,6 @@
 package funkin.states;
 
+import funkin.backend.CoolUtil;
 import haxe.ui.backend.flixel.CursorHelper;
 import funkin.song.Conductor.BPMChangeEvent;
 import flixel.FlxG;
@@ -40,7 +41,7 @@ class ChartingState extends MusicBeatState
 
 	public var strumLineDad:StrumLine;
 	public var strumLineBF:StrumLine;
-	public var songBar:FlxBar;
+
 
 	var eventStuff:Array<Dynamic> = [
 		['', "Nothing. Yep, that's right."],
@@ -393,7 +394,7 @@ class ChartingState extends MusicBeatState
 		stepperSpeed.value = _song.speed;
 		stepperSpeed.name = 'song_speed';
 
-		var characters:Array<String> = ['fat', 'noob'];
+		var characters:Array<String> = CoolUtil.coolTextFile('assets/shared/data/charlist.txt');
 
 		var player1DropDown = new FlxUIDropDownMenuCustom(10, stepperSpeed.y + 45, FlxUIDropDownMenuCustom.makeStrIdLabelArray(characters, true),
 			function(character:String)
@@ -770,11 +771,7 @@ class ChartingState extends MusicBeatState
 	{
 		FlxG.sound.playMusic(Paths.inst(currentSongName), 0.6, false);
 
-		songBar = new FlxBar(0, 0, LEFT_TO_RIGHT, FlxG.width, 20, this, 'songPos', 0, FlxG.sound.music.length, false);
-		songBar.scrollFactor.set();
-		songBar.createFilledBar(FlxColor.BLACK,FlxColor.WHITE,false);
-		songBar.numDivisions = 9999;
-        add(songBar); 
+		
 		if (check_mute_inst != null && check_mute_inst.checked)
 			FlxG.sound.music.volume = 0;
 

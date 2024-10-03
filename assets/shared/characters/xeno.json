@@ -1,0 +1,18 @@
+{
+  "char": "xeno",
+  "scale": {
+    "x": 1.0,
+    "y": 1.0
+  },
+
+  "healthIcon": "spirit-pixel",
+  "healthColors": [49, 176, 209],
+  "animOffsets": [
+    {
+      "name": "idle",
+      "offsetx": 2,
+      "offsety": 2
+    }
+  ],
+  "camOffsets": [0.0, 0.0]
+}

@@ -18,6 +18,11 @@ class Paths
 		return 'assets/images/$fileName$ext';
 	}
 
+	inline public static function ui(file:String)
+	{
+		return 'assets/shared/ui/$file.xml';
+	}
+
 	inline public static function getSharedPath(file:String = '')
 	{
 		return 'assets/shared/$file';
