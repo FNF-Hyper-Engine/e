@@ -6,7 +6,7 @@ import lime.app.Application;
 class MainMenuState extends MusicBeatState
 {
 	var instant = false;
-	var selectables:FlxSpriteGroup;
+	var selectables:FlxTypedGroup<FunkinSprite>;
 	var menuItems:Array<String> = ['storymode', 'freeplay', 'credits', 'merch', 'options'];
 	var camFollow:FlxObject;
 
@@ -16,7 +16,7 @@ class MainMenuState extends MusicBeatState
 	override function create()
 	{
 		instant = false;
-		selectables = new FlxSpriteGroup();
+		selectables = new FlxTypedGroup<FunkinSprite>();
 		for (i in 0...menuItems.length)
 		{
 			var string:String = menuItems[i];

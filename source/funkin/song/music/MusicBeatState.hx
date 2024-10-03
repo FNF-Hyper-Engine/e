@@ -96,6 +96,7 @@ class MusicBeatState extends FlxUIState
 
 		if (totalBeats % 4 == 0)
 			sectionHit();
+	
 	}
 
 	public function sectionHit()

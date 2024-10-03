@@ -35,6 +35,8 @@ class HealthIcon extends FunkinSprite
 			changeIcon(PlayState.SONG.player1);
 	}
 
+	private var iconOffsets:Array<Float> = [0, 0];
+
 	public function changeIcon(newChar:String):Void
 	{
 		if (newChar != 'bf-pixel' && newChar != 'bf-old')
@@ -48,9 +50,12 @@ class HealthIcon extends FunkinSprite
 					loadGraphic(Paths.image('icons/icon-' + newChar), true, 150, 150);
 				else
 				{
-					loadGraphic(Paths.image('icons/icon-empty'),true,150,150);
+					loadGraphic(Paths.image('icons/icon-empty'), true, 150, 150);
 				}
 				animation.add(newChar, [0, 1], 0, false, isPlayer);
+				iconOffsets[0] = (width - 150) / 2;
+				iconOffsets[1] = (width - 150) / 2;
+				updateHitbox();
 			}
 			animation.play(newChar);
 			char = newChar;
@@ -63,5 +68,12 @@ class HealthIcon extends FunkinSprite
 
 		if (sprTracker != null)
 			setPosition(sprTracker.x + sprTracker.width + 10, sprTracker.y - 30);
+	}
+
+	override function updateHitbox()
+	{
+		super.updateHitbox();
+		offset.x = iconOffsets[0];
+		offset.y = iconOffsets[1];
 	}
 }
