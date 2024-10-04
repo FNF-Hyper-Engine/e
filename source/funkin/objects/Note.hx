@@ -60,6 +60,7 @@ class Note extends FunkinSprite
 		addByPrefix('3end', 'red hold end');
 
 		playAnim('$ID');
+
 		if (isSustainNote)
 		{
 			playAnim('$noteData' + 'hold');
