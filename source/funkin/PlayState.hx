@@ -67,6 +67,8 @@ class PlayState extends MusicBeatState
 	{
 		instance = this;
 
+	//	var createTime:Float = Lib.getTimer();
+
 		if (SONG == null)
 			SONG = Song.loadFromJson('dadbattle-hard', 'dadbattle');
 
@@ -216,6 +218,7 @@ class PlayState extends MusicBeatState
 		postCrap();
 
 		call('onCreatePost');
+		//trace('${SONG.song.toLowerCase()} - Took ${((Lib.getTimer() - createTime) / 1000)}s to load');
 
 		super.create();
 		startCountdown();
@@ -434,7 +437,7 @@ class PlayState extends MusicBeatState
 		bf = new Character(SONG.player1);
 		bf.setPosition(770, 450);
 		add(bf);
-		StageManager.charposcrap(dad, gf, bf);
+	
 
 		cpuStrums = new StrumLine(60, 50, 0);
 		cpuStrums.scale.set(1, 1);
@@ -510,6 +513,8 @@ class PlayState extends MusicBeatState
 		add(camFollow);
 
 		camGame.follow(camFollow, LOCKON, 0.04);
+
+		StageManager.charposcrap(dad, gf, bf);
 
 		// FlxG.camera.setScrollBounds(0, FlxG.width, 0, FlxG.height);
 

@@ -73,12 +73,10 @@ class Character extends FunkinSprite
 			var prefix:String = anim.name;
 			var offsets = anim.offsets;
 			var looped = anim.loop;
-		
 
 			addByPrefix(animName, prefix, animfps, looped);
 			addOffset(animName, offsets[0], offsets[1]);
-			playAnim('idle');
-
+			// playAnim('idle');
 		}
 
 		switch jsonFile.char
@@ -116,27 +114,27 @@ class Character extends FunkinSprite
 
 			case 'bf':
 				/*
-				addByPrefix('idle', 'BF idle dance', 24, true);
-				addByPrefix('singLEFT', 'BF NOTE LEFT', 24);
-				addByPrefix('singDOWN', 'BF NOTE DOWN', 24);
-				addByPrefix('singUP', 'BF NOTE UP', 24);
-				addByPrefix('singRIGHT', 'BF NOTE RIGHT', 24);
+					addByPrefix('idle', 'BF idle dance', 24, true);
+					addByPrefix('singLEFT', 'BF NOTE LEFT', 24);
+					addByPrefix('singDOWN', 'BF NOTE DOWN', 24);
+					addByPrefix('singUP', 'BF NOTE UP', 24);
+					addByPrefix('singRIGHT', 'BF NOTE RIGHT', 24);
 
-				addOffset('idle', -5);
-				addOffset("singUP", -29, 27);
-				addOffset("singRIGHT", -38, -7);
-				addOffset("singLEFT", 12, -6);
-				addOffset("singDOWN", -10, -50);
-				addOffset("singUPmiss", -29, 27);
-				addOffset("singRIGHTmiss", -30, 21);
-				addOffset("singLEFTmiss", 12, 24);
-				addOffset("singDOWNmiss", -11, -19);
-				addOffset("hey", 7, 4);
-				addOffset('firstDeath', 37, 11);
-				addOffset('deathLoop', 37, 5);
-				addOffset('deathConfirm', 37, 69);
-				addOffset('scared', -4);
-*/
+					addOffset('idle', -5);
+					addOffset("singUP", -29, 27);
+					addOffset("singRIGHT", -38, -7);
+					addOffset("singLEFT", 12, -6);
+					addOffset("singDOWN", -10, -50);
+					addOffset("singUPmiss", -29, 27);
+					addOffset("singRIGHTmiss", -30, 21);
+					addOffset("singLEFTmiss", 12, 24);
+					addOffset("singDOWNmiss", -11, -19);
+					addOffset("hey", 7, 4);
+					addOffset('firstDeath', 37, 11);
+					addOffset('deathLoop', 37, 5);
+					addOffset('deathConfirm', 37, 69);
+					addOffset('scared', -4);
+				 */
 				playAnim('idle');
 		}
 
@@ -147,7 +145,7 @@ class Character extends FunkinSprite
 	{
 		var fat = '';
 		if (Assets.exists('assets/shared/characters/$json.json'))
-			fat = Assets.getText('assets/shared/characters/empty.json'); // ('assets/shared/characters/$json.json')
+			fat = Assets.getText('assets/shared/characters/$json.json');
 		else
 			fat = Assets.getText('assets/shared/characters/empty.json');
 
