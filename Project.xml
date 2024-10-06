@@ -43,6 +43,13 @@
 	<window allow-high-dpi="false" unless="desktop" />
 	<haxelib name="flxanimate" unless='html5' />
 
+
+	<section if="COMPILE_ALL_CLASSES">
+		<haxeflag name="-dce" value="no" />
+		<haxeflag name="--macro" value="ClassMacro.addAdditionalClasses()" />
+		<!-- I'm Crying So Hard Right Now. -->
+	</section>
+
 	<haxedev name="webgl" />
 
 	<!--In

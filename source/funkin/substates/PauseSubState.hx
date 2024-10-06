@@ -1,13 +1,13 @@
-package funkin.states;
+package funkin.substates;
 
 import flixel.effects.FlxFlicker;
 import lime.app.Application;
 
-class MainMenuState extends MusicBeatState
+class PauseSubState extends FlxSubState
 {
 	var instant = false;
-	var selectables:FlxTypedGroup<FunkinSprite>;
-	var menuItems:Array<String> = ['storymode', 'freeplay', 'credits', 'merch', 'options'];
+	var selectables:FlxTypedGroup<Alphabet>;
+	var menuItems:Array<String> = ['resume', 'exit'];
 	var camFollow:FlxObject;
 
 	var selectedSomethin:Bool = false;
@@ -16,17 +16,15 @@ class MainMenuState extends MusicBeatState
 	override function create()
 	{
 		instant = false;
-		selectables = new FlxTypedGroup<FunkinSprite>();
+		selectables = new FlxTypedGroup<Alphabet>();
 		for (i in 0...menuItems.length)
 		{
 			var string:String = menuItems[i];
-			var menuCrap:FunkinSprite;
-			menuCrap = new FunkinSprite(0, 60 + (i * 160));
-			menuCrap.atlasFrames('mainmenu/$string');
-			menuCrap.addByPrefix('idle', '$string idle', 30, true);
+			var menuCrap:Alphabet;
+			menuCrap = new Alphabet(0, 60 + (i * 160), string);
+
 			menuCrap.ID = i;
-			menuCrap.addByPrefix('selected', '$string selected', 30, true);
-			menuCrap.playAnim('idle');
+
 			menuCrap.screenCenter(X);
 			//	menuCrap.y += menuCrap.height * i;
 
@@ -49,8 +47,6 @@ class MainMenuState extends MusicBeatState
 		super.create();
 	}
 
-
-
 	override function update(elapsed:Float)
 	{
 		if (FlxG.sound.music.volume < 0.8)
@@ -58,50 +54,41 @@ class MainMenuState extends MusicBeatState
 			FlxG.sound.music.volume += 0.5 * FlxG.elapsed;
 		}
 
-		if (!selectedSomethin)
+		#if (!android)
+		if (FlxG.keys.justPressed.UP)
 		{
-			#if (!android)
-			if (FlxG.keys.justPressed.UP)
-			{
-				FlxG.sound.play('assets/sounds/scrollMenu.ogg');
-				changeItem(-1);
-			}
-
-			if (FlxG.keys.justPressed.DOWN)
-			{
-				FlxG.sound.play('assets/sounds/scrollMenu.ogg');
-				changeItem(1);
-			}
-
-			if (FlxG.keys.justPressed.BACKSPACE)
-			{
-				FlxG.switchState(new TitleState());
-			}
-
-			if (FlxG.keys.justPressed.ENTER)
-			{
-				selectedSomethin = true;
-				FlxG.sound.play('assets/sounds/confirmMenu' + TitleState.soundExt);
-
-				// FlxFlicker.flicker(magenta, 1.1, 0.15, false);
-
-				selectables.forEach(function(spr:FlxSprite)
-				{
-					FlxFlicker.flicker(spr, 1, 0.06, false, false, function(flick:FlxFlicker)
-					{
-						var daChoice:String = menuItems[curSelected];
-
-						switch (daChoice)
-						{
-							case 'storymode':
-								FlxG.switchState(new funkin.PlayState());
-								trace("Story Menu Selected");
-						}
-					});
-				});
-			}
-			#end
+			FlxG.sound.play('assets/sounds/scrollMenu.ogg');
+			changeItem(-1);
 		}
+
+		if (FlxG.keys.justPressed.DOWN)
+		{
+			FlxG.sound.play('assets/sounds/scrollMenu.ogg');
+			changeItem(1);
+		}
+
+		if (FlxG.keys.justPressed.ENTER)
+		{
+			// selectedSomethin = true;
+			// FlxG.sound.play('assets/sounds/confirmMenu' + TitleState.soundExt);
+
+			// FlxFlicker.flicker(magenta, 1.1, 0.15, false);
+
+			var daChoice:String = menuItems[curSelected];
+
+			switch (daChoice.toLowerCase())
+			{
+				case 'resume':
+					close();
+				case 'exit':
+					#if sys
+					Sys.exit(0);
+					#else
+					close();
+					#end
+			}
+		}
+		#end
 
 		super.update(elapsed);
 
@@ -122,11 +109,10 @@ class MainMenuState extends MusicBeatState
 
 		selectables.forEach(function(spr:FlxSprite)
 		{
-			spr.animation.play('idle');
-
+			spr.alpha = 0.5;
 			if (spr.ID == curSelected)
 			{
-				spr.animation.play('selected');
+				spr.alpha = 0.9;
 				FlxG.camera.follow(camFollow, null, 0.06);
 				camFollow.setPosition(spr.getGraphicMidpoint().x, spr.getGraphicMidpoint().y);
 			}

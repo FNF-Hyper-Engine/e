@@ -111,15 +111,16 @@ class Note extends FunkinSprite
 				alpha = 0.6;
 		}
 	}
+	/*
+		@:noCompletion
+		override function set_clipRect(rect:FlxRect):FlxRect
+		{
+			clipRect = rect;
 
-	@:noCompletion
-	override function set_clipRect(rect:FlxRect):FlxRect
-	{
-		clipRect = rect;
+			if (frames != null && isSustainNote)
+				frame = frames.frames[animation.frameIndex];
 
-		if (frames != null && isSustainNote)
-			frame = frames.frames[animation.frameIndex];
-
-		return rect;
-	}
+			return rect;
+		}
+	 */
 }

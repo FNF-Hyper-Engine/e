@@ -29,6 +29,7 @@ class HScript
 		interp = new hscript.Interp();
 
 		set('game', PlayState.instance);
+		set('camHUD', PlayState.instance.camHUD);
 		set('FlxTween', flixel.tweens.FlxTween);
 		set('iconP1', PlayState.instance.iconP1);
 		set('iconP2', PlayState.instance.iconP2);
@@ -39,8 +40,25 @@ class HScript
 		set('girlfriend', PlayState.instance.iconP1);
 		set('opponent', PlayState.instance.dad);
 		set('enemy', PlayState.instance.dad);
+		set('FlxG', FlxG);
 
 		set('setBotplay', PlayState.instance.sebotplay);
+
+		set('getModSprite', function(val:String, txt:Bool = false)
+		{
+			return PlayState.instance.getLuaObject(val, txt);
+		});
+
+		set('createModSprite', function(tag:String, x:Int = 0, y:Int = 0)
+		{
+			var modchr:ModSprite;
+			modchr = new ModSprite(x, y);
+			PlayState.instance.modchartSprites.set(tag, modchr);
+		});
+
+		set('alphaHud',function(ass:Float){
+			PlayState.instance.setHudAlpha(ass);
+		});
 
 		interp.execute(ast);
 	}

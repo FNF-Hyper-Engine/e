@@ -48,4 +48,8 @@ class Paths
 		// //trace('Loading  SparrowAtlas: "$fileName".');
 		return FlxAtlasFrames.fromSparrow(image(fileName), xml(fileName));
 	}
+
+	public static function sound(s:String) {
+		return 'assets/sounds/$s';
+	}
 }
