@@ -45,6 +45,7 @@ class ClassMacro
 			"haxe.display",
 			"haxe.exceptions",
 			"haxe.extern",
+			"Math",
 		])
 			Compiler.include(inc, ["haxe.ui"]);
 
