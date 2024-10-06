@@ -12,11 +12,10 @@ class StrumLine extends FunkinSprite
 	public function new(x, y, player:Int = 1, lanes:Int = 4)
 	{
 		super(x, y);
-	    
+
 		strumNotes = new FlxTypedGroup<StrumNote>();
 		notes = new FlxTypedGroup<Note>();
-		
-		
+
 		// if (player == 0)
 		//	botStrum = true;
 		for (i in 0...lanes)
@@ -69,19 +68,34 @@ class StrumLine extends FunkinSprite
 				&& daNote.wasGoodHit)
 			{
 				var swagRect:FlxRect;
-				
-					swagRect = new FlxRect(0, 0, daNote.frameWidth, daNote.frameHeight);
+
+				swagRect = new FlxRect(0, 0, daNote.frameWidth, daNote.frameHeight);
 				if (daNote.y + daNote.offset.y * daNote.scale.y <= center)
 				{
 					swagRect.y = (center - daNote.y) / daNote.scale.y;
 					swagRect.width = daNote.width / daNote.scale.x;
 					swagRect.height = (daNote.height / daNote.scale.y) - swagRect.y;
 				}
-				else if (y - daNote.offset.y * daNote.scale.y + daNote.height >= center && PlayState.downScroll)
+				else if (PlayState.downScroll)
 				{
-					swagRect.height = (center - daNote.y) / daNote.scale.y;
-					swagRect.y = daNote.frameHeight - swagRect.height;
-					daNote.clipRect = swagRect;
+					if (daNote.isSustainNote)
+					{
+						if (daNote.animation.curAnim.name.endsWith("end") && daNote.prevNote != null)
+							daNote.y += daNote.prevNote.height;
+						else
+							daNote.y += daNote.height / 2;
+
+						if ((!daNote.mustPress || (daNote.wasGoodHit || (daNote.prevNote.wasGoodHit && !daNote.canBeHit)))
+							&& daNote.y - daNote.offset.y * daNote.scale.y + daNote.height >= y)
+						{
+							// clipRect is applied to graphic itself so use frame Heights
+							var swagRect:FlxRect = new FlxRect(0, 0, daNote.frameWidth, daNote.frameHeight);
+
+							swagRect.height = (y - daNote.y) / daNote.scale.y;
+							swagRect.y = daNote.frameHeight - swagRect.height;
+							daNote.clipRect = swagRect;
+						}
+					}
 				}
 				daNote.clipRect = swagRect;
 			}
@@ -130,7 +144,7 @@ class StrumLine extends FunkinSprite
 				var convertedString:String = PlayState.instance.coolAnims[note.noteData];
 				var dad:Character = PlayState.instance.dad;
 				dad.playAnim(convertedString, true);
-				//trace('Opponent likes to sing $convertedString' + '.');
+				// trace('Opponent likes to sing $convertedString' + '.');
 			}
 			else if (note.mustPress)
 			{
@@ -142,17 +156,16 @@ class StrumLine extends FunkinSprite
 			if (strum)
 			{
 				var strum = strumNotes.members[note.noteData];
-				
+
 				if (note.mustPress)
 				{
-				
 					PlayState.instance.health += note.hitHealth;
 				}
 
 				if (strum.animation.curAnim.finished)
 					strum.playAnim('${note.noteData}', false);
-                if(note.mustPress && !PlayState.botplay )
-				strum.animation.play('${note.noteData}confirm', true);
+				if (note.mustPress && !PlayState.botplay)
+					strum.animation.play('${note.noteData}confirm', true);
 			}
 		}
 		note.pressed = true;

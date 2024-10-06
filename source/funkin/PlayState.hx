@@ -28,7 +28,7 @@ class PlayState extends MusicBeatState
 
 	public var progressDial:FlxPieDial;
 
-	public static var middleScroll:Bool = false;
+	public static var middleScroll:Bool = true;
 
 	public static var downScroll:Bool = false;
 
@@ -83,7 +83,7 @@ class PlayState extends MusicBeatState
 		var createTime:Float = Lib.getTimer();
 
 		if (SONG == null)
-			SONG = Song.loadFromJson('second-chance-hard', 'second-chance');
+			SONG = Song.loadFromJson('bopeebo-hard', 'bopeebo');
 
 		camGame = new FlxCamera();
 		camHUD = new FlxCamera();
@@ -160,6 +160,7 @@ class PlayState extends MusicBeatState
 
 				susLength = susLength / Conductor.stepCrochet;
 				unspawnNotes.push(swagNote);
+				var sustime:Float = 0;
 				var height:Float = 0;
 				for (susNote in 0...Math.floor(susLength))
 				{
@@ -174,34 +175,38 @@ class PlayState extends MusicBeatState
 						sustainNote.offset.y -= 2.5;
 					else
 						sustainNote.offset.y += 2.5;
-					sustainNote.makeGraphic(1, 1);
+					//sustainNote.makeGraphic(1, 1);
 					sustainNote.visible = false;
+					sustime = sustainNote.strumTime;
 					unspawnNotes.push(sustainNote);
 				}
+				/**
+					* 
+					 
+					var actualNote:Note = new Note(daStrumTime + 50, daNoteData, oldNote, true);
+					actualNote.height = height;
+					actualNote.mustPress = gottaHitNote;
+					actualNote.ID = swagNote.ID;
+					actualNote.setGraphicSize(Note.swagWidth / 2, Std.int(height));
+					actualNote.updateHitbox();
+					actualNote.offset.x -= actualNote.width / 2;
+					actualNote.offset.y -= 2.5;
+					actualNote.scale.x = 0.7;
+					actualNote.y += actualNote.height;
+				**/
 
-				var actualNote:Note = new Note(daStrumTime + 50, daNoteData, oldNote, true);
-				actualNote.height = height;
-				actualNote.mustPress = gottaHitNote;
-				actualNote.ID = swagNote.ID;
-				actualNote.setGraphicSize(Note.swagWidth / 2, Std.int(height));
-				actualNote.updateHitbox();
-				actualNote.offset.x -= actualNote.width / 2;
-				actualNote.offset.y -= 2.5;
-				actualNote.scale.x = 0.7;
-				actualNote.y += actualNote.height;
-
-				var s:Note = new Note(actualNote.strumTime + (Conductor.stepCrochet * Math.floor(susLength)) - 10, daNoteData, oldNote, true);
+				var s:Note = new Note(sustime + Conductor.stepCrochet - 50, daNoteData, oldNote, true);
 				s.sustainLength = songNotes[2];
 				s.scrollFactor.set(0, 0);
 				s.mustPress = gottaHitNote;
 				s.isSustainNote = true;
 				s.playAnim('${s.noteData}end');
-				s.offset.x -= s.width * 1.1;
+				s.offset.x -= s.width * 1;
 				s.offset.y += 7;
-				s.scale.y = 0.7;
+				s.scale.y = 0.9;
 				if (susLength > 0)
 				{
-					unspawnNotes.push(actualNote);
+					//unspawnNotes.push(actualNote);
 					function sortByShit(Obj1:Note, Obj2:Note):Int
 					{
 						return sortNotes(FlxSort.ASCENDING, Obj1, Obj2);
@@ -346,7 +351,7 @@ class PlayState extends MusicBeatState
 
 		camGame.fade(FlxColor.BLACK, 1);
 		camHUD.fade(FlxColor.BLACK, 1);
-		FlxTween.tween(this, {defaultCamZoom: 1.5});
+		//	FlxTween.tween(this, {defaultCamZoom: 1.5});
 		new FlxTimer().start(1, function(FlxTime:FlxTimer)
 		{
 			FlxG.switchState(new funkin.states.MainMenuState());
@@ -470,11 +475,13 @@ class PlayState extends MusicBeatState
 		cpuStrums = new StrumLine(60, 50, 0);
 		cpuStrums.scale.set(1, 1);
 
-		if (!middleScroll)
+		uiGroup.add(cpuStrums.strumNotes);
+		uiGroup.add(cpuStrums.notes);
+		uiGroup.add(cpuStrums);
+		
+		if (middleScroll)
 		{
-			uiGroup.add(cpuStrums.strumNotes);
-			uiGroup.add(cpuStrums.notes);
-			uiGroup.add(cpuStrums);
+			cpuStrums.x = FlxG.width * 2;
 		}
 
 		Conductor.songPosition = -5000;
@@ -543,8 +550,6 @@ class PlayState extends MusicBeatState
 		camGame.follow(camFollow, LOCKON, 0.04);
 
 		StageManager.charposcrap(dad, gf, bf);
-
-		
 
 		sebotplay(false);
 	}
@@ -699,9 +704,6 @@ class PlayState extends MusicBeatState
 
 			//	if (dad.curCharacter == 'mom')
 			//		vocals.volume = 1;
-
-			if (SONG.song.toLowerCase() == 'tutorial')
-				FlxTween.tween(FlxG.camera, {zoom: 0.9}, (Conductor.stepCrochet * 4 / 1000), {ease: FlxEase.elasticInOut});
 		}
 
 		if (cameraRightSide && camFollow.x != bf.getMidpoint().x - 100)
@@ -718,9 +720,6 @@ class PlayState extends MusicBeatState
 					camFollow.x = bf.getMidpoint().x - 200;
 					camFollow.y = bf.getMidpoint().y - 200;
 			}
-
-			if (SONG.song.toLowerCase() == 'tutorial')
-				FlxTween.tween(FlxG.camera, {zoom: 1.05}, (Conductor.stepCrochet * 4 / 1000), {ease: FlxEase.elasticInOut});
 		}
 	}
 
@@ -747,7 +746,7 @@ class PlayState extends MusicBeatState
 
 		gf.dance();
 
-		FlxG.camera.setScrollBounds(0, FlxG.width, 0, FlxG.height);
+		//	FlxG.camera.setScrollBounds(0, FlxG.width, 0, FlxG.height);
 
 		iconP1.setGraphicSize(Std.int(iconP1.width + 30));
 		iconP2.setGraphicSize(Std.int(iconP2.width + 30));
@@ -793,6 +792,8 @@ class PlayState extends MusicBeatState
 				resyncVocals();
 			}
 		}
+		if (SONG.song.toLowerCase() == 'bopeebo')
+			bf.playAnim('hey');
 	}
 
 	function sortByShit(Obj1:Note, Obj2:Note):Int

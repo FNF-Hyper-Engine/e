@@ -76,9 +76,9 @@ class Character extends FunkinSprite
 
 			addByPrefix(animName, prefix, animfps, looped);
 			addOffset(animName, offsets[0], offsets[1]);
-			// playAnim('idle');
+		    playAnim(animName);
 		}
-
+		antialiasing = !jsonFile.char.contains('pixel') ? true : false;
 		switch jsonFile.char
 		{
 			case 'gf':
@@ -86,6 +86,7 @@ class Character extends FunkinSprite
 				addByIndices('danceLeft', 'GF Dancing Beat', [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], "", 24, false);
 				addByIndices('danceRight', 'GF Dancing Beat', [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29], "", 24, false);
 				playAnim('danceRight');
+			
 		}
 		playAnim('dies');
 		playAnim('idle');

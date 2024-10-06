@@ -65,7 +65,6 @@ class Note extends FunkinSprite
 		{
 			playAnim('$noteData' + 'hold');
 			scale.y *= Conductor.stepCrochet / 100 * 1.5 * PlayState.SONG.speed;
-			alpha = 0.7;
 		}
 		// trace(prevNote);
 
@@ -80,6 +79,7 @@ class Note extends FunkinSprite
 
 	override function update(elapsed:Float)
 	{
+		alpha = 1;
 		super.update(elapsed);
 		if (mustPress)
 		{
@@ -104,23 +104,18 @@ class Note extends FunkinSprite
 				wasGoodHit = true;
 			}
 		}
-
-		if (tooLate)
-		{
-			if (alpha > 0.3)
-				alpha = 0.6;
-		}
 	}
-	/*
-		@:noCompletion
-		override function set_clipRect(rect:FlxRect):FlxRect
-		{
-			clipRect = rect;
 
-			if (frames != null && isSustainNote)
-				frame = frames.frames[animation.frameIndex];
 
-			return rect;
-		}
-	 */
+	@:noCompletion
+	override function set_clipRect(rect:FlxRect):FlxRect
+	{
+		clipRect = rect;
+
+		if (frames != null && isSustainNote)
+			frame = frames.frames[animation.frameIndex];
+
+		return rect;
+	}
+	
 }

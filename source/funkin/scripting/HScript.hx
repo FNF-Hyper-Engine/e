@@ -37,10 +37,12 @@ class HScript
 		set('bf', PlayState.instance.bf);
 		set('boyfriend', PlayState.instance.bf);
 		set('gf', PlayState.instance.gf);
+		set('Conductor', Conductor);
 		set('girlfriend', PlayState.instance.iconP1);
 		set('opponent', PlayState.instance.dad);
 		set('enemy', PlayState.instance.dad);
 		set('FlxG', FlxG);
+		set('Math', Math);
 
 		set('setBotplay', PlayState.instance.sebotplay);
 
@@ -56,7 +58,8 @@ class HScript
 			PlayState.instance.modchartSprites.set(tag, modchr);
 		});
 
-		set('alphaHud',function(ass:Float){
+		set('alphaHud', function(ass:Float)
+		{
 			PlayState.instance.setHudAlpha(ass);
 		});
 
