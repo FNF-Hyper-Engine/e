@@ -23,4 +23,3 @@ function onUpdatePost(elapsed:Float)
 function onSectionHit(curSection:Int) {}
 function onCreatePost() {}
 function onCreate() {}
-t

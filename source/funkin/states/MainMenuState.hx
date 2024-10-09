@@ -49,6 +49,8 @@ class MainMenuState extends MusicBeatState
 		super.create();
 	}
 
+
+
 	override function update(elapsed:Float)
 	{
 		if (FlxG.sound.music.volume < 0.8)

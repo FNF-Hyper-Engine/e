@@ -8,7 +8,7 @@ typedef CharacterFile =
 	var char:String;
 
 	// Scale of the Character (represented by Array).
-	var scale:Array<Int>;
+	var scale:Null<Int>;
 
 	// Health icon and health bar color of the Character.
 	var healthIcon:String;
@@ -33,7 +33,7 @@ typedef AnimArray =
 
 class Character extends FunkinSprite
 {
-	public var jsonFile:CharacterFile;
+	public var jsonFile:Null<CharacterFile>;
 
 	public var animOffsets:Map<String, Array<Dynamic>>;
 	public var debugMode:Bool = false;
@@ -73,14 +73,12 @@ class Character extends FunkinSprite
 			var prefix:String = anim.name;
 			var offsets = anim.offsets;
 			var looped = anim.loop;
-		
 
 			addByPrefix(animName, prefix, animfps, looped);
 			addOffset(animName, offsets[0], offsets[1]);
-			playAnim('idle');
-
+		    playAnim(animName);
 		}
-
+		antialiasing = !jsonFile.char.contains('pixel') ? true : false;
 		switch jsonFile.char
 		{
 			case 'gf':
@@ -88,66 +86,26 @@ class Character extends FunkinSprite
 				addByIndices('danceLeft', 'GF Dancing Beat', [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], "", 24, false);
 				addByIndices('danceRight', 'GF Dancing Beat', [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29], "", 24, false);
 				playAnim('danceRight');
-			case 'xeno':
-				addByPrefix('idle', 'Beast_IDLE');
-				playAnim("idle");
-
-			case 'dad':
-				addByPrefix('idle', 'Dad idle dance', 24, true);
-				addByPrefix('singLEFT', 'dad sing note right', 24);
-				addByPrefix('singDOWN', 'Dad Sing Note DOWN', 24);
-				addByPrefix('singUP', 'Dad Sing note UP', 24);
-				addByPrefix('singRIGHT', 'Dad Sing Note LEFT', 24);
-
-				addOffset('idle');
-				addOffset("singUP", -6, 50);
-				addOffset("singRIGHT", 0, 27);
-				addOffset("singLEFT", -10, 10);
-				addOffset("singDOWN", 0, -30);
-
-				playAnim('idle');
-
-			case 'deadbf':
-				addByPrefix('dies', 'BF dies', 24);
-				addByPrefix('loop', 'BF Dead Loop', 24, true);
-				addByPrefix('confirm', 'BF Dead confirm', 24);
-
-				playAnim('dies');
-
-			case 'bf':
-				/*
-				addByPrefix('idle', 'BF idle dance', 24, true);
-				addByPrefix('singLEFT', 'BF NOTE LEFT', 24);
-				addByPrefix('singDOWN', 'BF NOTE DOWN', 24);
-				addByPrefix('singUP', 'BF NOTE UP', 24);
-				addByPrefix('singRIGHT', 'BF NOTE RIGHT', 24);
-
-				addOffset('idle', -5);
-				addOffset("singUP", -29, 27);
-				addOffset("singRIGHT", -38, -7);
-				addOffset("singLEFT", 12, -6);
-				addOffset("singDOWN", -10, -50);
-				addOffset("singUPmiss", -29, 27);
-				addOffset("singRIGHTmiss", -30, 21);
-				addOffset("singLEFTmiss", 12, 24);
-				addOffset("singDOWNmiss", -11, -19);
-				addOffset("hey", 7, 4);
-				addOffset('firstDeath', 37, 11);
-				addOffset('deathLoop', 37, 5);
-				addOffset('deathConfirm', 37, 69);
-				addOffset('scared', -4);
-*/
-				playAnim('idle');
+			
 		}
+		playAnim('dies');
+		playAnim('idle');
+		scaleCrap(jsonFile);
 
-		screenCenter();
+		// screenCenter();
+	}
+
+	function scaleCrap(js:CharacterFile)
+	{
+		if (js.scale != null)
+			scale.set(js.scale, js.scale);
 	}
 
 	public static function parseCharacterFile(json:String = 'bf'):CharacterFile
 	{
 		var fat = '';
 		if (Assets.exists('assets/shared/characters/$json.json'))
-			fat = Assets.getText('assets/shared/characters/empty.json'); // ('assets/shared/characters/$json.json')
+			fat = Assets.getText('assets/shared/characters/$json.json');
 		else
 			fat = Assets.getText('assets/shared/characters/empty.json');
 

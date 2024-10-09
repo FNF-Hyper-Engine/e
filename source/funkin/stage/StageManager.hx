@@ -105,6 +105,8 @@ class StageManager
 				bf.y -= 100;
 				PlayState.instance.defaultCamZoom = 0.9;
 				gf.kill();
+			default:
+				trace("");	
 		}
 	}
 }

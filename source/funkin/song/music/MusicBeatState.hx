@@ -17,24 +17,20 @@ class MusicBeatState extends FlxUIState
 	private var curStep:Int = 0;
 	private var curBeat:Int = 0;
 
-	// private var controls(get, never):Controls;
-	// inline function get_controls():Controls
-	//	return PlayerSettings.player1.controls;
+	private var controls(get, never):Controls;
+
+	inline function get_controls():Controls
+		return PlayerSettings.player1.controls;
 
 	override function create()
 	{
-
-		
 		#if (!web)
 		// TitleState.soundExt = '.ogg';
 		#end
 
 		super.create();
-		#if windows
-	//	trace(223);
-		System.gc();
-		#end
 
+		// prettyPrint('Controls: ${controls}');
 	}
 
 	override function update(elapsed:Float)
@@ -47,6 +43,14 @@ class MusicBeatState extends FlxUIState
 
 		super.update(elapsed);
 	}
+
+	override function openSubState(substate:FlxSubState)
+	{
+		os(substate);
+		super.openSubState(substate);
+	}
+
+	public function os(substate:FlxSubState) {}
 
 	private function updateBeat():Void
 	{
@@ -96,11 +100,28 @@ class MusicBeatState extends FlxUIState
 
 		if (totalBeats % 4 == 0)
 			sectionHit();
-	
+
+		#if sys
+		//	trace(223);
+		System.gc();
+		#end
 	}
 
-	public function sectionHit()
+	public function sectionHit():Void
 	{
 		curSection += 1;
+	}
+
+	public static function prettyPrint(text:String):Void
+	{
+		#if sys
+		var header = "______";
+		for (i in 0...text.length)
+			header += "_";
+		Sys.println("");
+		Sys.println('$header');
+		Sys.println('|   $text   |');
+		Sys.println('|$header|');
+		#end
 	}
 }

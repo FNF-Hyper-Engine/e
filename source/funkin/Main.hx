@@ -1,5 +1,6 @@
 package funkin;
 
+
 import openfl.display.DisplayObject;
 import haxe.ui.Toolkit;
 import funkin.modding.Mods;
@@ -12,14 +13,18 @@ import funkin.modding.Mods;
 #end
 class Main extends Sprite
 {
+
 	public function new()
 	{
 		super();
 		Toolkit.theme = 'dark';
 		Toolkit.init();
+		var game = new FlxGame(0, 0,  funkin.Init);
 		
+		@:privateAccess
+		game._customSoundTray = FunkinSoundTray;
 		#if (!android)
-		addChild(new FlxGame(0, 0, TitleState #if (!html5) #end));
+		addChild(game);
 		#else
 		addChild(new FlxGame(0, 0, PlayState));
 		#end
@@ -44,11 +49,11 @@ class Main extends Sprite
 
 	function setFlxDefines()
 	{
-		FlxG.mouse.visible = false;
+
 		FlxG.cameras.useBufferLocking = true;
 		FlxG.autoPause = false;
 		FlxG.fixedTimestep = false;
-		FlxG.mouse.useSystemCursor = true;
+
 	}
 
 	@:noCompletion override function __hitTest(x:Float, y:Float, shapeFlag:Bool, stack:Array<DisplayObject>, interactiveOnly:Bool, hitObject:DisplayObject):Bool
