@@ -51,6 +51,8 @@
 
 	<haxelib name="tjson" />
 	<haxelib name="hscript" />
+
+	<haxeflag name="--macro" value="funkin.macros.GithubThing.main()" />
 	
 
 	<!--In
