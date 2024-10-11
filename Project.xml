@@ -5,7 +5,8 @@
 
 	<!-- _________________________ Application Settings _________________________ -->
 
-	<app title="Funkin' Hyper" file="Funkin' Hyper" main="funkin.Main" version="0.1.0" company="HaxeFlixel" />
+	<app title="Funkin' Hyper" file="Funkin' Hyper" main="funkin.Main" version="0.1.0"
+		company="HaxeFlixel" />
 
 
 	<app preloader="flixel.system.FlxPreloader" />
@@ -59,8 +60,6 @@
 	<haxelib name="tjson" />
 	<haxelib name="hscript" />
 
-	<haxeflag name="--macro" value="funkin.macros.GithubThing.main()" />
-	
 
 	<!--In
 	case you want to use the ui package-->
@@ -73,7 +72,7 @@
 	<haxedef name="FLX_NO_MOUSE" if="mobile" />
 	<haxedef name="FLX_NO_KEYBOARD" if="mobile" />
 	<haxedef name="FLX_NO_TOUCH" if="desktop" />
-	
+
 
 	<!--Disable
 	the Flixel core debugger. Automatically gets set whenever you compile in release mode!-->
@@ -82,13 +81,20 @@
 	<!--Enable
 	this for Nape release builds for a serious peformance improvement-->
 	<haxedef name="NAPE_RELEASE_BUILD" unless="debug" />
+    <haxedef name="FLX_DRAW_QUADS" />
+	<section if="cpp">
 
+		<haxedef name="HXCPP_TELEMETRY" />
+		<haxedef name="HXCPP_STACK_TRACE" />
+		<haxedef name="HXCPP_STACK_LINE" />
 
-
+	</section>
 
 	<section if="release">
-		<log info="Compiling for release! Optimization and files cleanup included (except saves).\nDon't forget to rename the bin folder before shipping!." if="hl" />
-	
+		<log
+			info="Compiling for release! Optimization and files cleanup included (except saves).\nDon't forget to rename the bin folder before shipping!."
+			if="hl" />
+
 		<postbuild cmd="haxe --run PostBuild.hx --cleanup" if="hl" />
 	</section>
 
@@ -98,8 +104,5 @@
 	custom nodes like icons here (higher priority to override the HaxeFlixel icon)-->
 
 
-
-
-	
 	<setenv name="SHOW_CONSOLE" /> <!-- on windows it shows console if start by clicking on .exe -->
 </project>

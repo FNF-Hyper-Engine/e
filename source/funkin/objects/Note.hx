@@ -65,6 +65,7 @@ class Note extends FunkinSprite
 		{
 			playAnim('$noteData' + 'hold');
 			scale.y *= Conductor.stepCrochet / 100 * 1.5 * PlayState.SONG.speed;
+			alpha = 0.7;
 		}
 		// trace(prevNote);
 
@@ -79,8 +80,9 @@ class Note extends FunkinSprite
 
 	override function update(elapsed:Float)
 	{
-		alpha = 1;
+		
 		super.update(elapsed);
+		
 		if (mustPress)
 		{
 			// The * 0.5 us so that its easier to hit them too late, instead of too early
@@ -106,7 +108,7 @@ class Note extends FunkinSprite
 		}
 	}
 
-
+/*
 	@:noCompletion
 	override function set_clipRect(rect:FlxRect):FlxRect
 	{
@@ -117,5 +119,5 @@ class Note extends FunkinSprite
 
 		return rect;
 	}
-	
+*/	
 }

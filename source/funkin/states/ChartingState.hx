@@ -1,5 +1,6 @@
 package funkin.states;
 
+import openfl.display.BitmapData;
 import funkin.backend.CoolUtil;
 import haxe.ui.backend.flixel.CursorHelper;
 import funkin.song.Conductor.BPMChangeEvent;
@@ -41,6 +42,7 @@ class ChartingState extends MusicBeatState
 
 	public var strumLineDad:StrumLine;
 	public var strumLineBF:StrumLine;
+
 
 
 	var eventStuff:Array<Dynamic> = [
@@ -97,6 +99,8 @@ class ChartingState extends MusicBeatState
 
 	private static var lastSong:String = '';
 
+	var bitmapData:BitmapData = new BitmapData(1280, 720);
+
 	var bpmTxt:FlxText;
 
 	var camPos:FlxObject;
@@ -148,15 +152,20 @@ class ChartingState extends MusicBeatState
 	private var blockPressWhileScrolling:Array<FlxUIDropDownMenuCustom> = [];
 
 	var gridLayer:FlxTypedGroup<FlxSprite>;
+	var flxSprite:FlxSprite;
 
 	override function create()
 	{
+		flxSprite = new FlxSprite();
+		
+
+
+
+
 		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
 		bg.scrollFactor.set();
 		bg.color = 0xFF222222;
 		add(bg);
-
-
 
 		gridLayer = new FlxTypedGroup<FlxSprite>();
 		add(gridLayer);
@@ -181,6 +190,7 @@ class ChartingState extends MusicBeatState
 
 		curRenderedSustains = new FlxTypedGroup<FlxSprite>();
 		curRenderedNotes = new FlxTypedGroup<Note>();
+	
 		curRenderedNoteType = new FlxTypedGroup<FlxText>();
 
 		nextRenderedSustains = new FlxTypedGroup<FlxSprite>();
@@ -771,7 +781,6 @@ class ChartingState extends MusicBeatState
 	{
 		FlxG.sound.playMusic(Paths.inst(currentSongName), 0.6, false);
 
-		
 		if (check_mute_inst != null && check_mute_inst.checked)
 			FlxG.sound.music.volume = 0;
 
@@ -780,7 +789,7 @@ class ChartingState extends MusicBeatState
 			generateSong();
 			FlxG.sound.music.pause();
 			Conductor.songPosition = 0;
-		
+
 			if (vocals != null)
 			{
 				vocals.play();
@@ -934,6 +943,8 @@ class ChartingState extends MusicBeatState
 
 	override function update(elapsed:Float)
 	{
+		
+
 		curStep = recalculateSteps();
 
 		if (FlxG.sound.music.time < 0)
@@ -1497,6 +1508,7 @@ class ChartingState extends MusicBeatState
 		for (i in _song.notes[curSection].sectionNotes)
 		{
 			var note:Note = setupNoteData(i, false);
+
 			curRenderedNotes.add(note);
 			if (note.sustainLength > 0)
 			{

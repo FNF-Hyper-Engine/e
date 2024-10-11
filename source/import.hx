@@ -8,6 +8,10 @@
 #if (!macro)
 import flixel.FlxCamera;
 import funkin.objects.countdown.*;
+import flixel.system.FlxAssets.FlxShader;
+import openfl.filters.ShaderFilter;
+import funkin.params.*;
+import funkin.shaders.*;
 import funkin.gameplay.*;
 import funkin.gameplay.objects.*;
 import funkin.gameplay.objects.char.*;

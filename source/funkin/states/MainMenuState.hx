@@ -42,7 +42,7 @@ class MainMenuState extends MusicBeatState
 		FlxG.camera.follow(camFollow, null, 0.06);
 
 		changeItem();
-		var versionShit:FlxText = new FlxText(5, FlxG.height - 18, 0, 'v${Application.current.meta.get('version')} | Git Commit: ${Globals.gitCommit}', 12);
+		var versionShit:FlxText = new FlxText(5, FlxG.height - 18, 0, 'v${Application.current.meta.get('version')} | Git Commit: NAN', 12);
 		versionShit.scrollFactor.set();
 		versionShit.setFormat("assets/fonts/InriaSans-BoldItalic.ttf", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(versionShit);

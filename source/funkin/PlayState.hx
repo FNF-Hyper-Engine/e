@@ -7,11 +7,17 @@ class PlayState extends MusicBeatState
 	var cpuStrums:StrumLine;
 	var playerStrums:StrumLine;
 
+	public var shaders:Array<BaseShader>;
+
 	public static var instance:PlayState;
+
+	public var songRatings:SongRating;
 
 	public var pixelZoom:Float = 6.0;
 
 	var camPos:FlxPoint;
+
+	public var shader:BlurShader;
 
 	public var camFollow:FlxObject;
 
@@ -28,7 +34,7 @@ class PlayState extends MusicBeatState
 
 	public var progressDial:FlxPieDial;
 
-	public static var middleScroll:Bool = true;
+	public static var middleScroll:Bool = false;
 
 	public static var downScroll:Bool = false;
 
@@ -83,7 +89,7 @@ class PlayState extends MusicBeatState
 		var createTime:Float = Lib.getTimer();
 
 		if (SONG == null)
-			SONG = Song.loadFromJson('bopeebo-hard', 'bopeebo');
+			SONG = Song.loadFromJson('test', 'test');
 
 		camGame = new FlxCamera();
 		camHUD = new FlxCamera();
@@ -111,8 +117,8 @@ class PlayState extends MusicBeatState
 		FlxG.cameras.add(camHUD, false);
 		FlxCamera.defaultCameras = [camGame];
 
-		call('onCreate');
 		presongLoad();
+		call('onCreate');
 		Conductor.songPosition = -5000;
 		Conductor.mapBPMChanges(SONG);
 		Conductor.changeBPM(SONG.bpm);
@@ -175,7 +181,7 @@ class PlayState extends MusicBeatState
 						sustainNote.offset.y -= 2.5;
 					else
 						sustainNote.offset.y += 2.5;
-					//sustainNote.makeGraphic(1, 1);
+					// sustainNote.makeGraphic(1, 1);
 					sustainNote.visible = false;
 					sustime = sustainNote.strumTime;
 					unspawnNotes.push(sustainNote);
@@ -195,7 +201,7 @@ class PlayState extends MusicBeatState
 					actualNote.y += actualNote.height;
 				**/
 
-				var s:Note = new Note(sustime + Conductor.stepCrochet - 50, daNoteData, oldNote, true);
+				var s:Note = new Note(sustime + Conductor.stepCrochet, daNoteData, oldNote, true);
 				s.sustainLength = songNotes[2];
 				s.scrollFactor.set(0, 0);
 				s.mustPress = gottaHitNote;
@@ -206,7 +212,7 @@ class PlayState extends MusicBeatState
 				s.scale.y = 0.9;
 				if (susLength > 0)
 				{
-					//unspawnNotes.push(actualNote);
+					// unspawnNotes.push(actualNote);
 					function sortByShit(Obj1:Note, Obj2:Note):Int
 					{
 						return sortNotes(FlxSort.ASCENDING, Obj1, Obj2);
@@ -241,6 +247,11 @@ class PlayState extends MusicBeatState
 		trace('${SONG.song.toLowerCase()} - Took ${((Lib.getTimer() - createTime) / 1000)}s to load');
 
 		super.create();
+
+		shaders = new Array<BaseShader>();
+		shader = new BlurShader();
+		bf.shader = shader;
+		shaders.push(shader);
 		startCountdown();
 	}
 
@@ -349,6 +360,8 @@ class PlayState extends MusicBeatState
 		remove(cpuStrums.notes);
 		remove(playerStrums.notes);
 
+		trace(songRatings.SongResults);
+		camFollow.setPosition(gf.getGraphicMidpoint().x, gf.getGraphicMidpoint().y);
 		camGame.fade(FlxColor.BLACK, 1);
 		camHUD.fade(FlxColor.BLACK, 1);
 		//	FlxTween.tween(this, {defaultCamZoom: 1.5});
@@ -372,6 +385,11 @@ class PlayState extends MusicBeatState
 
 	override public function update(elapsed:Float)
 	{
+		for (index => shader in shaders)
+		{
+			shader.update(elapsed);
+		}
+
 		if (unspawnNotes[0] != null)
 		{
 			if (unspawnNotes[0].strumTime - Conductor.songPosition < 2000)
@@ -460,6 +478,12 @@ class PlayState extends MusicBeatState
 
 	function presongLoad()
 	{
+		songRatings = new SongRating();
+		songRatings.SongResults.players = [SONG.player2, SONG.player3, SONG.player1];
+		songRatings.SongResults.song = SONG.song;
+		songRatings.SongResults.songSpeed = SONG.speed;
+		trace(songRatings.SongResults);
+
 		dad = new Character(SONG.player2);
 		dad.setPosition(100, 100);
 		add(dad);
@@ -478,7 +502,7 @@ class PlayState extends MusicBeatState
 		uiGroup.add(cpuStrums.strumNotes);
 		uiGroup.add(cpuStrums.notes);
 		uiGroup.add(cpuStrums);
-		
+
 		if (middleScroll)
 		{
 			cpuStrums.x = FlxG.width * 2;
@@ -883,19 +907,27 @@ class PlayState extends MusicBeatState
 		{
 			daRating = 'shit';
 			score = 50;
+			songRatings.SongResults.shits++;
 		}
 		else if (noteDiff > Conductor.safeZoneOffset * 0.75)
 		{
 			daRating = 'bad';
 			score = 100;
+			songRatings.SongResults.bads++;
 		}
 		else if (noteDiff > Conductor.safeZoneOffset * 0.2)
 		{
 			daRating = 'good';
 			score = 200;
+			songRatings.SongResults.goods++;
+		}
+		if (daRating == 'sick')
+		{
+			songRatings.SongResults.sicks++;
 		}
 
 		songScore += score;
+		songRatings.SongResults.score = songScore;
 
 		/* if (combo > 60)
 				daRating = 'sick';

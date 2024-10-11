@@ -159,6 +159,8 @@ class StrumLine extends FunkinSprite
 
 				if (note.mustPress)
 				{
+					if(note.isSustainNote)
+						note.hitHealth *= 0.02;
 					PlayState.instance.health += note.hitHealth;
 				}
 

@@ -1,16 +1,11 @@
 package funkin;
 
 
-import openfl.display.DisplayObject;
+
 import haxe.ui.Toolkit;
 import funkin.modding.Mods;
 
-#if windows
-@:headerCode("
-	#include <windows.h>
-	#include <winuser.h>
-")
-#end
+
 class Main extends Sprite
 {
 
@@ -40,11 +35,7 @@ class Main extends Sprite
 		setFlxDefines();
 	}
 
-	#if windows
-	@:functionCode('
-	SetProcessDPIAware();
-')
-	#end
+
 	public static function registerAsDPICompatible() {}
 
 	function setFlxDefines()
@@ -56,13 +47,4 @@ class Main extends Sprite
 
 	}
 
-	@:noCompletion override function __hitTest(x:Float, y:Float, shapeFlag:Bool, stack:Array<DisplayObject>, interactiveOnly:Bool, hitObject:DisplayObject):Bool
-		return false;
-
-	@:noCompletion override function __hitTestHitArea(x:Float, y:Float, shapeFlag:Bool, stack:Array<DisplayObject>, interactiveOnly:Bool,
-			hitObject:DisplayObject):Bool
-		return false;
-
-	@:noCompletion override function __hitTestMask(x:Float, y:Float):Bool
-		return false;
 }

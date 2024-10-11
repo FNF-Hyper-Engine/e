@@ -67,9 +67,9 @@ class FunkinSoundTray extends FlxSoundTray
     y = -height;
     screenCenter();
 
-    volumeUpSound = Paths.sound("soundtray/Volup");
-    volumeDownSound = Paths.sound("soundtray/Voldown");
-    volumeMaxSound = Paths.sound("soundtray/VolMAX");
+    volumeUpSound = 'assets/shared/sounds/up.ogg';
+    volumeDownSound = 'assets/shared/sounds/down.ogg';
+    volumeMaxSound = 'assets/shared/sounds/max.ogg';
 
     trace("Custom tray added!");
   }
