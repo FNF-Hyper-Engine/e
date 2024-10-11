@@ -42,6 +42,10 @@ class MusicBeatState extends FlxUIState
 		updateBeat();
 
 		super.update(elapsed);
+
+		#if cpp
+		cpp.vm.tracy.TracyProfiler.frameMark();
+		#end
 	}
 
 	override function openSubState(substate:FlxSubState)
