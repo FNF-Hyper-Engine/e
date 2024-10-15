@@ -46,6 +46,7 @@ jobs:
           haxelib git haxeui-core https://github.com/haxeui/haxeui-core --never --skip-dependencies
           haxelib git hxdiscord_rpc https://github.com/MAJigsaw77/hxdiscord_rpc --never
           haxelib install hxCodec --never
+          haxelib git rulescript https://github.com/Kriptel/RuleScript.git --never
           haxelib list
           
 
