@@ -1,6 +1,6 @@
 package funkin.states.editors;
 
-import haxe.ui.containers.VBox;
+//import haxe.ui.containers.VBox;
 
 class CharacterEditorState extends MusicBeatState
 {
@@ -54,11 +54,11 @@ class CharacterEditorState extends MusicBeatState
 	}
 }
 
-@:build(haxe.ui.ComponentBuilder.build("assets/shared/ui/chart-editor/main-view.xml"))
-class CharEditorGui extends VBox
+tbuild(haxe.ui.ComponentBuilder.build("assets/shared/ui/chart-editor/main-view.xml"))
+class CharEditorGui extends flixel.FlxSprite
 {
 	public function new()
 	{
-		super();
+		super(3,3);
 	}
 }
