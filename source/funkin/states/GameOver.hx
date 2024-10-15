@@ -1,6 +1,5 @@
 package funkin.states;
 
-import flixel.addons.text.FlxTypeText;
 
 class GameOver extends MusicBeatState
 {

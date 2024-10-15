@@ -1,5 +1,7 @@
 package funkin.objects;
 
+import funkin.objects.StrumNote;
+
 class Note extends FunkinSprite
 {
 	public var strumTime:Float;
@@ -11,6 +13,12 @@ class Note extends FunkinSprite
 	public static var GREEN_NOTE:Int = 2;
 	public static var BLUE_NOTE:Int = 1;
 	public static var RED_NOTE:Int = 3;
+
+	public static var globalRgbShaders:Array<RGBPalette> = [];
+
+	public var rgbShader:RGBShaderReference;
+
+	public var useRGBShader:Bool = true;
 
 	public var noteType:Int = 0;
 	public var mustPress:Bool;
@@ -29,6 +37,9 @@ class Note extends FunkinSprite
 
 	public function new(strumTime:Float, noteData, prevNote, isSustainNote = false)
 	{
+		rgbShader = new RGBShaderReference(this, Note.initializeGlobalRGBShader(noteData));
+		rgbShader.enabled = true;
+
 		super(x, y);
 
 		this.strumTime = strumTime;
@@ -36,9 +47,11 @@ class Note extends FunkinSprite
 		this.prevNote = prevNote;
 		this.isSustainNote = isSustainNote;
 		ID = noteData;
-		frames = Paths.getSparrowAtlas('notes');
+		frames = Paths.getSparrowAtlas('noteStyles/normal');
 		setGraphicSize(width * 0.7);
 		addAnimations();
+
+		antialiasing = false;
 
 		updateHitbox();
 	}
@@ -46,26 +59,16 @@ class Note extends FunkinSprite
 	@:noCompletion
 	function addAnimations()
 	{
-		addByPrefix('0', 'pruiple');
-		addByPrefix('1', 'blueee');
-		addByPrefix('2', 'greennn');
-		addByPrefix('3', 'reddd');
-		addByPrefix('0hold', 'purple hold piece');
-		addByPrefix('1hold', 'blue hold piece');
-		addByPrefix('2hold', 'green hold piece');
-		addByPrefix('3hold', 'red hold piece');
-		addByPrefix('0end', 'pruple end hold');
-		addByPrefix('1end', 'blue hold end');
-		addByPrefix('2end', 'green hold end');
-		addByPrefix('3end', 'red hold end');
-
-		playAnim('$ID');
+		addByPrefix('note', 'note');
+		addByPrefix('hold', 'hold');
+		addByPrefix('end', 'end');
+		playAnim('note');
 
 		if (isSustainNote)
 		{
-			playAnim('$noteData' + 'hold');
+			playAnim('hold');
 			scale.y *= Conductor.stepCrochet / 100 * 1.5 * PlayState.SONG.speed;
-			alpha = 0.7;
+	        alpha = 0.6;
 		}
 		// trace(prevNote);
 
@@ -80,9 +83,9 @@ class Note extends FunkinSprite
 
 	override function update(elapsed:Float)
 	{
-		
+		//alpha = 1;
 		super.update(elapsed);
-		
+
 		if (mustPress)
 		{
 			// The * 0.5 us so that its easier to hit them too late, instead of too early
@@ -106,9 +109,23 @@ class Note extends FunkinSprite
 				wasGoodHit = true;
 			}
 		}
+
+		var a = 0;
+		switch (ID)
+		{
+			case 0:
+				a = 90;
+			case 1:
+				a = 0;
+			case 2:
+				a = 180;
+			case 3:
+				a = -90;
+		}
+		if (!isSustainNote)
+			angle = a;
 	}
 
-/*
 	@:noCompletion
 	override function set_clipRect(rect:FlxRect):FlxRect
 	{
@@ -119,5 +136,22 @@ class Note extends FunkinSprite
 
 		return rect;
 	}
-*/	
+
+	public static function initializeGlobalRGBShader(noteData:Int)
+	{
+		if (globalRgbShaders[noteData] == null)
+		{
+			var newRGB:RGBPalette = new RGBPalette();
+			globalRgbShaders[noteData] = newRGB;
+
+			var arr:Array<FlxColor> = funkin.settings.Settings.arrowRGB[noteData];
+			if (noteData > -1 && noteData <= arr.length)
+			{
+				newRGB.r = arr[0];
+				newRGB.g = arr[1];
+				newRGB.b = arr[2];
+			}
+		}
+		return globalRgbShaders[noteData];
+	}
 }

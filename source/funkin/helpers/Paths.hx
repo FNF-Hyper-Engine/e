@@ -50,6 +50,6 @@ class Paths
 	}
 
 	public static function sound(s:String) {
-		return 'assets/sounds/$s';
+		return 'assets/sounds/$s.ogg';
 	}
 }

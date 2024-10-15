@@ -1,5 +1,7 @@
 var bool:Bool = false;
 
+//import flixel.math.*;
+
 function onBeatHit(curBeat:Int)
 {
 	if (bool)

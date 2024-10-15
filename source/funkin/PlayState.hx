@@ -11,13 +11,14 @@ class PlayState extends MusicBeatState
 
 	public static var instance:PlayState;
 
+
 	public var songRatings:SongRating;
 
 	public var pixelZoom:Float = 6.0;
 
 	var camPos:FlxPoint;
 
-	public var shader:BlurShader;
+	public var shader:TransparencyShader;
 
 	public var camFollow:FlxObject;
 
@@ -39,6 +40,8 @@ class PlayState extends MusicBeatState
 	public static var downScroll:Bool = false;
 
 	public var unspawnNotes:Array<Note> = [];
+
+	public static var globalRect:FlxRect;
 
 	public var coolSections:Array<Bool> = [];
 
@@ -63,8 +66,15 @@ class PlayState extends MusicBeatState
 	public var gf:Character;
 	public var dad:Character;
 
+	//* game cam bitch
 	public var camGame:FlxCamera;
+
+	//* hud stuff
+	public var camUnderlay:FlxCamera;
 	public var camHUD:FlxCamera;
+
+	//* above everything
+	public var camOther:FlxCamera;
 
 	var uiGroup:FlxTypedGroup<FlxBasic>;
 	var curStage:String = 'default';
@@ -80,18 +90,39 @@ class PlayState extends MusicBeatState
 
 	public var songScore:Float = 0.0;
 	public var songMisses:Float = 0.0;
-	public var paused:Bool = true;
+	public var paused:Bool = false;
+
+	public var dialogue:Array<String>;
+
+	public var db:DialogueBox;
 
 	override public function create()
 	{
 		instance = this;
+
+		globalRect = new FlxRect(FlxG.width / 2, FlxG.height / 2, FlxG.width, FlxG.height);
+
+		dialogue = Song.loadFromTxt('senpai');
+		trace(dialogue);
+
+		shaders = new Array<BaseShader>();
+
+		shader = new TransparencyShader();
+		shaders.push(shader);
 
 		var createTime:Float = Lib.getTimer();
 
 		if (SONG == null)
 			SONG = Song.loadFromJson('test', 'test');
 
+		camOther = new FlxCamera();
+		camOther.bgColor.alpha = 0;
+
 		camGame = new FlxCamera();
+
+		camUnderlay = new FlxCamera();
+		camUnderlay.bgColor.alpha = 0;
+
 		camHUD = new FlxCamera();
 		camHUD.bgColor.alpha = 0;
 
@@ -114,7 +145,9 @@ class PlayState extends MusicBeatState
 		add(uiGroup);
 
 		FlxG.cameras.reset(camGame);
+		FlxG.cameras.add(camUnderlay, false);
 		FlxG.cameras.add(camHUD, false);
+		FlxG.cameras.add(camOther, false);
 		FlxCamera.defaultCameras = [camGame];
 
 		presongLoad();
@@ -177,6 +210,7 @@ class PlayState extends MusicBeatState
 					height += sustainNote.height;
 					sustainNote.mustPress = gottaHitNote;
 					sustainNote.offset.x -= sustainNote.width;
+
 					if (downScroll == false)
 						sustainNote.offset.y -= 2.5;
 					else
@@ -206,7 +240,7 @@ class PlayState extends MusicBeatState
 				s.scrollFactor.set(0, 0);
 				s.mustPress = gottaHitNote;
 				s.isSustainNote = true;
-				s.playAnim('${s.noteData}end');
+				s.playAnim('end');
 				s.offset.x -= s.width * 1;
 				s.offset.y += 7;
 				s.scale.y = 0.9;
@@ -248,11 +282,16 @@ class PlayState extends MusicBeatState
 
 		super.create();
 
-		shaders = new Array<BaseShader>();
-		shader = new BlurShader();
-		bf.shader = shader;
-		shaders.push(shader);
+		// dialogueShit();
 		startCountdown();
+	}
+
+	function dialogueShit()
+	{
+		db = new DialogueBox(false, dialogue, startCountdown);
+		db.cameras = [camOther];
+
+		add(db);
 	}
 
 	public function setHudAlpha(float:Float)
@@ -331,7 +370,7 @@ class PlayState extends MusicBeatState
 		return Song.parseJSONshit(slicefart);
 	}
 
-	function startCountdown(skin:String = 'funkin')
+	function startCountdown()
 	{
 		if (SONG.needsVoices)
 			vocals = new FlxSound().loadEmbedded(Paths.inst(SONG.song.toLowerCase(), 'Voices'));
@@ -367,7 +406,7 @@ class PlayState extends MusicBeatState
 		//	FlxTween.tween(this, {defaultCamZoom: 1.5});
 		new FlxTimer().start(1, function(FlxTime:FlxTimer)
 		{
-			FlxG.switchState(new funkin.states.MainMenuState());
+			FlxG.switchState(new funkin.states.ResultState(songRatings));
 		});
 	}
 
@@ -392,7 +431,7 @@ class PlayState extends MusicBeatState
 
 		if (unspawnNotes[0] != null)
 		{
-			if (unspawnNotes[0].strumTime - Conductor.songPosition < 2000)
+			if (unspawnNotes[0].strumTime - Conductor.songPosition < 10000000)
 			{
 				var dunceNote:Note = unspawnNotes[0];
 				if (dunceNote.mustPress)
@@ -405,17 +444,20 @@ class PlayState extends MusicBeatState
 			}
 		}
 
-		if (FlxG.sound.music != null)
+		if (FlxG.sound.music.playing)
+		{
 			Conductor.songPosition = FlxG.sound.music.time;
-
-		vocals.volume = FlxG.sound.music.volume;
+			vocals.volume = FlxG.sound.music.time;
+		}
 
 		call('onUpdate', elapsed);
 
 		keyShit(elapsed);
 
+		camUnderlay.zoom = camHUD.zoom;
 		camHUD.zoom = FlxMath.lerp(1, camHUD.zoom, 0.95);
-		camGame.zoom = FlxMath.lerp(1, camGame.zoom, 0.95);
+
+		camGame.zoom = FlxMath.lerp(defaultCamZoom, camGame.zoom, 0.95);
 
 		if (health > 2)
 			health = 2;
@@ -628,6 +670,19 @@ class PlayState extends MusicBeatState
 		if (FlxG.keys.justPressed.ENTER)
 			openSubState(new PauseSubState());
 
+		#if flixelshit
+		if (FlxG.keys.justPressed.ONE)
+			this.songRatings.SongResults.sicks++;
+		if (FlxG.keys.justPressed.TWO)
+			this.songRatings.SongResults.goods++;
+		if (FlxG.keys.justPressed.THREE)
+			this.songRatings.SongResults.bads++;
+		if (FlxG.keys.justPressed.FOUR)
+			this.songRatings.SongResults.shits++;
+
+		if (FlxG.keys.justPressed.NINE)
+			songEnd(); // skipping the song maybe????
+		#end
 		if (FlxG.sound.music.playing && SONG.notes[Std.int(curStep / 16)] != null)
 		{
 			cameraRightSide = SONG.notes[Std.int(curStep / 16)].mustHitSection;
@@ -638,7 +693,7 @@ class PlayState extends MusicBeatState
 		for (i in 0...keyShit.length)
 		{
 			var key = keyShit[i];
-			var hitval = 'static';
+			var hitval = 'press';
 			playerStrums.notes.forEach(function(note:Note)
 			{
 				if (note.strumTime <= Conductor.songPosition - 169 && !note.wasGoodHit && note.mustPress)
@@ -668,10 +723,12 @@ class PlayState extends MusicBeatState
 
 					playerStrums.invalidateNote(note, true);
 					var fucker:Float = 0.005;
+
 					if (!note.isSustainNote)
 					{
 						combo++;
-						popUpScore(note.strumTime);
+						popUpScore(note.strumTime, note);
+						call('goodNoteHit', note.noteData, note.isSustainNote, note.mustPress);
 					}
 					health += 0.025;
 					note.wasGoodHit = true;
@@ -684,6 +741,7 @@ class PlayState extends MusicBeatState
 					playerStrums.invalidateNote(note, true);
 					note.wasGoodHit = true;
 					note.pressed = true;
+					call('goodNoteHit', note.noteData, note.isSustainNote, note.mustPress);
 				}
 			});
 			if (key)
@@ -691,12 +749,12 @@ class PlayState extends MusicBeatState
 				//////////////////////trace("PRESSED: " + i);
 				var strum:StrumNote = playerStrums.strumNotes.members[i];
 
-				strum.playAnim(i + hitval, true);
+				strum.playAnim(hitval, true);
 			}
 			else if (keyShit2[i])
 			{
 				var strum:StrumNote = playerStrums.strumNotes.members[i];
-				strum.playAnim('$i', false);
+				strum.playAnim('static', false);
 			}
 		}
 		#end
@@ -841,12 +899,15 @@ class PlayState extends MusicBeatState
 
 	function resyncVocals():Void
 	{
-		vocals.pause();
+		if (vocals != null)
+		{
+			vocals.pause();
 
-		FlxG.sound.music.play();
-		Conductor.songPosition = FlxG.sound.music.time;
-		vocals.time = Conductor.songPosition;
-		vocals.play();
+			FlxG.sound.music.play();
+			Conductor.songPosition = FlxG.sound.music.time;
+			vocals.time = Conductor.songPosition;
+			vocals.play();
+		}
 	}
 
 	override function onResize(width, height)
@@ -861,7 +922,8 @@ class PlayState extends MusicBeatState
 	{
 		super.onFocusLost();
 
-		trace('Lost Focus! Pausing....');
+		trace('Lost Focus....');
+
 		pause();
 	}
 
@@ -870,7 +932,8 @@ class PlayState extends MusicBeatState
 		super.onFocusLost();
 
 		trace('Focusing! Resyncing Vocals.......');
-		resyncVocals();
+		if (vocals.playing)
+			resyncVocals();
 	}
 
 	function pause()
@@ -881,7 +944,7 @@ class PlayState extends MusicBeatState
 		vocals.pause();
 	}
 
-	public function popUpScore(strumtime:Float):Void
+	public function popUpScore(strumtime:Float, note:Note):Void
 	{
 		var noteDiff:Float = Math.abs(strumtime - Conductor.songPosition);
 		// boyfriend.playAnim('hey');
@@ -891,12 +954,12 @@ class PlayState extends MusicBeatState
 
 		var coolText:FlxText = new FlxText(0, 0, 0, '${strumtime - Conductor.songPosition}', 32);
 		coolText.screenCenter();
-		coolText.x = FlxG.width * 0.55;
+		coolText.x = FlxG.width * 0.2;
 		coolText.offset.x += FlxG.random.float(200, 300);
 		coolText.cameras = [camHUD];
 		coolText.acceleration.y = FlxG.random.int(200, 300);
 		coolText.velocity.y -= FlxG.random.int(140, 160);
-		add(coolText);
+		// add(coolText);
 
 		var rating:FunkinSprite = new FunkinSprite(0, 0);
 		var score:Int = 350;

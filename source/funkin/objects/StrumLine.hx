@@ -21,12 +21,13 @@ class StrumLine extends FunkinSprite
 		for (i in 0...lanes)
 		{
 			var strumNote:StrumNote;
-			strumNote = new StrumNote(x, y);
+			strumNote = new StrumNote(x, y, i);
 
 			strumNote.x = x + (strumNote.width * i);
 			strumNote.ID = i;
 			// strumNote.x += strumNote.width / 2;
-			strumNote.playAnim('$i');
+			strumNote.playAnim('static');
+
 			strumNotes.add(strumNote);
 		}
 		makeGraphic(FlxG.width * 4, 1);
@@ -60,23 +61,30 @@ class StrumLine extends FunkinSprite
 			daNote.x = strumNotes.members[daNote.noteData].x;
 
 			// daNote.y -= daNote.height;
-			var center:Float = strumNotes.members[daNote.noteData].y + 0 + Note.swagWidth / 2;
+			var center:Float = strumNotes.members[daNote.noteData].y + Note.swagWidth / 2;
 			if (daNote.isSustainNote
 				&& daNote.strumTime <= Conductor.songPosition + 100
 				&& !daNote.mustPress
 				|| daNote.mustPress
-				&& daNote.wasGoodHit)
+				&& daNote.wasGoodHit
+				&& !PlayState.downScroll)
 			{
-				var swagRect:FlxRect;
-
-				swagRect = new FlxRect(0, 0, daNote.frameWidth, daNote.frameHeight);
 				if (daNote.y + daNote.offset.y * daNote.scale.y <= center)
 				{
+					var swagRect:FlxRect;
+
+					swagRect = new FlxRect(0, 0, daNote.frameWidth, daNote.frameHeight);
 					swagRect.y = (center - daNote.y) / daNote.scale.y;
 					swagRect.width = daNote.width / daNote.scale.x;
 					swagRect.height = (daNote.height / daNote.scale.y) - swagRect.y;
+					daNote.clipRect = swagRect;
 				}
-				else if (PlayState.downScroll)
+				else if (daNote.isSustainNote
+					&& daNote.strumTime <= Conductor.songPosition + 100
+					&& !daNote.mustPress
+					|| daNote.mustPress
+					&& daNote.wasGoodHit
+					&& PlayState.downScroll)
 				{
 					if (daNote.isSustainNote)
 					{
@@ -85,19 +93,27 @@ class StrumLine extends FunkinSprite
 						else
 							daNote.y += daNote.height / 2;
 
-						if ((!daNote.mustPress || (daNote.wasGoodHit || (daNote.prevNote.wasGoodHit && !daNote.canBeHit)))
-							&& daNote.y - daNote.offset.y * daNote.scale.y + daNote.height >= y)
-						{
-							// clipRect is applied to graphic itself so use frame Heights
-							var swagRect:FlxRect = new FlxRect(0, 0, daNote.frameWidth, daNote.frameHeight);
+						// clipRect is applied to graphic itself so use frame Heights
+						var swagRect:FlxRect = new FlxRect(0, 0, daNote.frameWidth, daNote.frameHeight);
 
-							swagRect.height = (y - daNote.y) / daNote.scale.y;
-							swagRect.y = daNote.frameHeight - swagRect.height;
-							daNote.clipRect = swagRect;
-						}
+						swagRect.height = (center - daNote.y) / daNote.scale.y;
+						swagRect.y = daNote.frameHeight - swagRect.height;
+						daNote.clipRect = swagRect;
 					}
 				}
-				daNote.clipRect = swagRect;
+			}
+
+			if (PlayState.downScroll && daNote.isSustainNote)
+			{
+				if (daNote.animation.curAnim.name.endsWith('end'))
+				{
+					daNote.y += 10.5 * (fakeCrochet / 400) * 1.5 * scrollSpeed + (46 * (scrollSpeed - 1));
+					daNote.y -= 46 * (1 - (fakeCrochet / 600)) * scrollSpeed;
+
+					daNote.y -= 19;
+				}
+				daNote.y += (Note.swagWidth / 2) - (60.5 * (scrollSpeed - 1));
+				daNote.y += 27.5 * ((PlayState.SONG.bpm / 100) - 1) * (scrollSpeed - 1);
 			}
 
 			if (daNote.y > FlxG.height)
@@ -155,19 +171,22 @@ class StrumLine extends FunkinSprite
 
 			if (strum)
 			{
-				var strum = strumNotes.members[note.noteData];
+				var s = strumNotes.members[note.noteData];
 
 				if (note.mustPress)
 				{
-					if(note.isSustainNote)
-						note.hitHealth *= 0.02;
-					PlayState.instance.health += note.hitHealth;
+					if (!note.isSustainNote)
+						PlayState.instance.health += note.hitHealth;
 				}
 
-				if (strum.animation.curAnim.finished)
-					strum.playAnim('${note.noteData}', false);
-				if (note.mustPress && !PlayState.botplay)
-					strum.animation.play('${note.noteData}confirm', true);
+				if (!note.mustPress || note.mustPress && PlayState.botplay)
+				{
+					s.resetAnim = (Conductor.stepCrochet * 1.25 / 1000 / 1);
+				}
+				s.playAnim('confirm', true);
+
+				// if (s.animation.curAnim.finished) // shitted away in favor of dear old resetanim
+				//	s.playAnim('static', true);
 			}
 		}
 		note.pressed = true;

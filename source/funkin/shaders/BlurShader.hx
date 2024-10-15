@@ -5,7 +5,7 @@ class BlurShader extends BaseShader // https://www.shadertoy.com/view/XtBXDt
 	@:glFragmentSource('
  #pragma header
 
-            uniform float sigma = 0;
+            uniform float sigma = 2;
 
             void main()
             {
@@ -37,12 +37,8 @@ class BlurShader extends BaseShader // https://www.shadertoy.com/view/XtBXDt
 	public function new()
 	{
 		super();
-		sigma.value = time;
+		canUpdate = false;
 	}
 
-	override public function update(elapsed:Float)
-	{
-		sigma.value = time;
-		super.update(elapsed);
-	}
+
 }

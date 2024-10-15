@@ -32,6 +32,14 @@
 
 	<set name="BUILD_DIR" value="export" />
 	<source path="source" />
+
+	
+
+	<define name="DISCORD_ALLOWED" if="desktop" />
+	<define name="ACHIEVEMENTS_ALLOWED" />
+
+	<haxelib name="hxdiscord_rpc" if="DISCORD_ALLOWED"/>
+
 	<assets path="assets" exclude='*.pdn' />
 	<assets path="mods" exclude='*.fla' />
 	<assets path="include/windows" library="include" rename="" if="windows" />
@@ -44,6 +52,7 @@
 	<window allow-high-dpi="false" unless="desktop" />
 	<haxelib name="flxanimate" unless='html5' />
 
+	<haxelib name="hxCodec" if="cpp" />
 
 	<section if="COMPILE_ALL_CLASSES">
 		<haxeflag name="-dce" value="no" />
@@ -59,7 +68,7 @@
 
 	<haxelib name="tjson" />
 	<haxelib name="hscript" />
-
+	<haxelib name="rulescript" />
 
 	<!--In
 	case you want to use the ui package-->
@@ -82,11 +91,15 @@
 	this for Nape release builds for a serious peformance improvement-->
 	<haxedef name="NAPE_RELEASE_BUILD" unless="debug" />
   
-	<section if="cpp">
+	
+	<haxedef name="TRACY_ALLOWED" if='windows'/>
+	<haxedef name="flixelshit"/>
+	<section if="TRACY_ALLOWED">
 
 		<haxedef name="HXCPP_TELEMETRY" />
 		<haxedef name="HXCPP_STACK_TRACE" />
 		<haxedef name="HXCPP_STACK_LINE" />
+		<haxedef name="tracy"/>
 
 	</section>
 

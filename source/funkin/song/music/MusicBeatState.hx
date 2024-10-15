@@ -1,10 +1,21 @@
 package funkin.song.music;
 
+#if cpp
+import cpp.vm.Gc;
+#end
 import flixel.FlxG;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.addons.ui.FlxUIState;
 import flixel.util.FlxTimer;
 
+typedef CameraTransform =
+{
+	var angle:Float;
+	var zoom:Float;
+}
+#if !debug
+@:fileXml('tags="haxe,release"')
+#end
 class MusicBeatState extends FlxUIState
 {
 	private var lastBeat:Float = 0;
@@ -22,13 +33,28 @@ class MusicBeatState extends FlxUIState
 	inline function get_controls():Controls
 		return PlayerSettings.player1.controls;
 
+	override function destroy() {
+		super.destroy();
+		#if cpp
+		Gc.run(true);
+		#end
+	}
+
 	override function create()
 	{
+		#if cpp
+		Gc.run(true);
+		#end
+
 		#if (!web)
 		// TitleState.soundExt = '.ogg';
 		#end
 
 		super.create();
+
+		#if cpp
+		Gc.run(true);
+		#end
 
 		// prettyPrint('Controls: ${controls}');
 	}
@@ -43,7 +69,9 @@ class MusicBeatState extends FlxUIState
 
 		super.update(elapsed);
 
-	
+		#if cpp
+		Gc.run(true);
+		#end
 	}
 
 	override function openSubState(substate:FlxSubState)
@@ -125,5 +153,26 @@ class MusicBeatState extends FlxUIState
 		Sys.println('|   $text   |');
 		Sys.println('|$header|');
 		#end
+	}
+
+	public function resetState()
+	{
+		FlxG.resetState();
+	}
+
+	//* usage: switchState(new PlayState()); *\\ ( shortcut to FlxG.switchstate)
+	public function switchState(S)
+	{
+		FlxG.switchState(S);
+	}
+
+	public function setCameraTransform(?camera:FlxCamera, ?transform:CameraTransform)
+	{
+		if (camera == null)
+		{
+			camera = FlxG.camera;
+		}
+		camera.angle = transform.angle;
+		camera.zoom = transform.zoom;
 	}
 }

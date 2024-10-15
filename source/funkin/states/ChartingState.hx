@@ -1,49 +1,11 @@
 package funkin.states;
 
-import openfl.display.BitmapData;
-import funkin.backend.CoolUtil;
-import haxe.ui.backend.flixel.CursorHelper;
-import funkin.song.Conductor.BPMChangeEvent;
-import flixel.FlxG;
-import flixel.FlxSprite;
-import flixel.FlxObject;
-import flixel.addons.display.FlxGridOverlay;
-import flixel.addons.ui.FlxInputText;
-import flixel.addons.ui.FlxUI9SliceSprite;
-import flixel.addons.ui.FlxUI;
-import flixel.addons.ui.FlxUICheckBox;
-import flixel.addons.ui.FlxUIInputText;
-import flixel.addons.ui.FlxUINumericStepper;
-import flixel.addons.ui.FlxUITabMenu;
-import flixel.addons.ui.FlxUITooltip.FlxUITooltipStyle;
-import flixel.group.FlxGroup.FlxTypedGroup;
-import flixel.group.FlxGroup;
-import flixel.math.FlxMath;
-import flixel.math.FlxPoint;
-import flixel.system.FlxSound;
-import flixel.text.FlxText;
-import flixel.ui.FlxButton;
-import flixel.ui.FlxSpriteButton;
-import flixel.util.FlxColor;
-import haxe.Json;
-import lime.utils.Assets;
-import openfl.events.Event;
-import openfl.events.IOErrorEvent;
-import openfl.media.Sound;
-import openfl.net.FileReference;
-import openfl.utils.ByteArray;
-import openfl.utils.Assets as OpenFlAssets;
-
-using StringTools;
-
 class ChartingState extends MusicBeatState
 {
 	var noteTypeList:Array<String> = ['', '1 - Alt Animation', '2 - Hey!', '3 - Hurt Note'];
 
 	public var strumLineDad:StrumLine;
 	public var strumLineBF:StrumLine;
-
-
 
 	var eventStuff:Array<Dynamic> = [
 		['', "Nothing. Yep, that's right."],
@@ -157,10 +119,6 @@ class ChartingState extends MusicBeatState
 	override function create()
 	{
 		flxSprite = new FlxSprite();
-		
-
-
-
 
 		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
 		bg.scrollFactor.set();
@@ -190,7 +148,7 @@ class ChartingState extends MusicBeatState
 
 		curRenderedSustains = new FlxTypedGroup<FlxSprite>();
 		curRenderedNotes = new FlxTypedGroup<Note>();
-	
+
 		curRenderedNoteType = new FlxTypedGroup<FlxText>();
 
 		nextRenderedSustains = new FlxTypedGroup<FlxSprite>();
@@ -943,8 +901,6 @@ class ChartingState extends MusicBeatState
 
 	override function update(elapsed:Float)
 	{
-		
-
 		curStep = recalculateSteps();
 
 		if (FlxG.sound.music.time < 0)

@@ -11,6 +11,11 @@ class FunkinSprite extends FlxSprite
 		antialiasing = true;
 	}
 
+	public function sz(sx:Float = 1, sy:Float = 2)
+	{
+		scale.set(sx, sy);
+	}
+
 	public function playAnim(Animation:String, Force:Bool = false, Reversed:Bool = false, Frame:Int = 0)
 	{
 		animation.play(Animation, Force, Reversed, Frame);

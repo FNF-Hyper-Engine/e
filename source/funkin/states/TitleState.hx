@@ -9,6 +9,8 @@ class TitleState extends MusicBeatState
 	static var initialized:Bool = false;
 	static public var soundExt:String = ".ogg";
 
+	public static var GRID_SIZE:Int = 40;
+
 	var blackScreen:FlxSprite;
 	var credGroup:FlxGroup;
 	var credTextShit:Alphabet;
@@ -21,10 +23,12 @@ class TitleState extends MusicBeatState
 	var wackyImage:FlxSprite;
 	var skippedIntro:Bool = false;
 
+	var gridBG:FlxSprite;
+
 	override public function create()
 	{
 		Conductor.changeBPM(102);
-		FlxG.sound.playMusic('assets/music/freakyMenu.ogg');
+		FlxG.sound.playMusic('assets/music/freakyMenu.ogg', 5, true);
 
 		var diamond:FlxGraphic = FlxGraphic.fromClass(GraphicTransTileDiamond);
 		diamond.persist = true;
@@ -56,11 +60,8 @@ class TitleState extends MusicBeatState
 		{
 			startIntro();
 
-			var bg:FlxSprite = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
-			// bg.antialiasing = false;
-			// bg.setGraphicSize(Std.int(bg.width * 0.6));
-			// bg.updateHitbox();
-			add(bg);
+			gridBG = FlxGridOverlay.create(GRID_SIZE, GRID_SIZE, 1280, 720,true,FlxColor.fromRGB(0,0,200,255),FlxColor.BLUE);
+			add(gridBG);
 
 			#if flxanimate
 			character = new FlxAnimate(FlxG.width - 580, FlxG.height - 350, 'assets/images/characters/gf');
@@ -71,9 +72,11 @@ class TitleState extends MusicBeatState
 			add(character);
 			#end
 
-			logo = new FunkinSprite(-150, -100);
+			logo = new FunkinSprite(-20, -0);
 			logo.loadGraphic(Paths.image('logo'));
-			logo.screenCenter();
+			logo.sz(0.93, 0.93);
+
+			// logo.screenCenter();
 			logo.antialiasing = false;
 			add(logo);
 
@@ -147,6 +150,12 @@ class TitleState extends MusicBeatState
 	override public function update(elapsed:Float)
 	{
 		super.update(elapsed);
+		if (logo != null)
+		{
+			logo.scale.x = logo.scale.y;
+			logo.scale.y = FlxMath.lerp(0.93, logo.scale.y, 0.95);
+		}
+
 		if (FlxG.sound.music != null)
 			Conductor.songPosition = FlxG.sound.music.time;
 
@@ -168,6 +177,8 @@ class TitleState extends MusicBeatState
 	override function beatHit()
 	{
 		super.beatHit();
+		logo.scale.set(1.1, 1.1);
+
 		#if flxanimate
 		if (character != null)
 		{
@@ -177,7 +188,7 @@ class TitleState extends MusicBeatState
 			else
 				character.anim.play('right', true);
 			super.beatHit();
-			FlxG.camera.zoom += 0.05;
+			FlxG.camera.zoom += 0.009;
 		}
 		#end
 

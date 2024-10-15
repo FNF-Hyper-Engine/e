@@ -199,7 +199,7 @@ class Alphabet extends FlxTypedSpriteGroup<AlphaCharacter>
 					var daSound:String = "GF_";
 				//	FlxG.sound.play('assets/sounds/' + daSound + FlxG.random.int(1, 4) + TitleState.soundExt, 0.4);
 				}
-
+				FlxG.sound.play('assets/sounds/pixelText.ogg', 0.6);
 				add(letter);
 
 				lastSprite = letter;

@@ -1,7 +1,5 @@
 package funkin.song;
 
-
-
 import haxe.Json;
 import haxe.format.JsonParser;
 import lime.utils.Assets;
@@ -58,29 +56,33 @@ class Song
 			// LOL GOING THROUGH THE BULLSHIT TO CLEAN IDK WHATS STRANGE
 		}
 
-		// FIX THE CASTING ON WINDOWS/NATIVE
-		// Windows???
-		// trace(songData);
-
-		// trace('LOADED FROM JSON: ' + songData.notes);
-		/* 
-			for (i in 0...songData.notes.length)
-			{
-				trace('LOADED FROM JSON: ' + songData.notes[i].sectionNotes);
-				// songData.notes[i].sectionNotes = songData.notes[i].sectionNotes
-			}
-
-				daNotes = songData.notes;
-				daSong = songData.song;
-				daBpm = songData.bpm; */
-
 		return parseJSONshit(rawJson);
+	}
+
+	public static function loadFromTxt(song:String):Array<String>
+	{
+		if (Assets.exists('assets/data/$song/dialogue.txt'))
+		{
+			var txt;
+
+			txt = CoolUtil.coolTextFile('assets/data/$song/dialogue.txt');
+
+			return txt;
+		}
+		else
+		{
+			return [
+				"File could not be found.",
+				"Please check if " + '\n"assets/dat\na/$song/dialogue.txt" exists.'
+			];
+		}
+
 	}
 
 	public static function parseJSONshit(rawJson:String):SwagSong
 	{
 		var swagShit:SwagSong = cast Json.parse(rawJson).song;
-		swagShit.validScore = true;
+		// swagShit.validScore = true;
 		return swagShit;
 	}
 }
