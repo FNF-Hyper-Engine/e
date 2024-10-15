@@ -73,8 +73,7 @@
 	<!--In
 	case you want to use the ui package-->
 	<haxelib name="flixel-ui" />
-	<haxelib name="haxeui-flixel" />
-	<haxelib name="haxeui-core" />
+
 
 	<!--Optimise
 	inputs, be careful you will get null errors if you don't use conditionals in your game-->
