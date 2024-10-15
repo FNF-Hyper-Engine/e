@@ -45,6 +45,7 @@ jobs:
           haxelib git haxeui-flixel https://github.com/haxeui/haxeui-flixel --never
           haxelib git haxeui-core https://github.com/haxeui/haxeui-core --never --skip-dependencies 
            haxelib install hxCodec --never
+           haxelib git rulescript https://github.com/Kriptel/RuleScript.git --never
           haxelib list
           
 
