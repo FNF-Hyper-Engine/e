@@ -38,7 +38,7 @@
 	<define name="DISCORD_ALLOWED" if="desktop" />
 	<define name="ACHIEVEMENTS_ALLOWED" />
 
-	<haxelib name="hxdiscord_rpc" if="DISCORD_ALLOWED"/>
+	<haxelib name="hxdiscord_rpc" if="DISCORD_ALLOWED" unless="html5"/>
 
 	<assets path="assets" exclude='*.pdn' />
 	<assets path="mods" exclude='*.fla' />
@@ -73,8 +73,7 @@
 	<!--In
 	case you want to use the ui package-->
 	<haxelib name="flixel-ui" />
-	<haxelib name="haxeui-flixel" />
-	<haxelib name="haxeui-core" />
+
 
 	<!--Optimise
 	inputs, be careful you will get null errors if you don't use conditionals in your game-->

@@ -4,7 +4,7 @@ package;
 class PostBuild
 {
 	public static function main():Void
-	{
+	{    
 		for (arg in Sys.args())
 			switch arg
 			{
