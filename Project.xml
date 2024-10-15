@@ -38,7 +38,7 @@
 	<define name="DISCORD_ALLOWED" if="desktop" />
 	<define name="ACHIEVEMENTS_ALLOWED" />
 
-	<haxelib name="hxdiscord_rpc" if="DISCORD_ALLOWED"/>
+	<haxelib name="hxdiscord_rpc" if="DISCORD_ALLOWED" unless="html5"/>
 
 	<assets path="assets" exclude='*.pdn' />
 	<assets path="mods" exclude='*.fla' />
